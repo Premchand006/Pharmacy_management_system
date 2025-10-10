@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+build/
+dist/
+eggs/
+*.egg-info/
+
+# SQLite DB (if you want DB in repo, remove this)
+pharmacy.db
+backend/pharmacy.db
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+pnpm-lock.yaml
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+*.env
+
+# TypeScript
+*.tsbuildinfo
+
+frontend\.venv\
+frontend/node_modules/
