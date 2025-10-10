@@ -396,4 +396,100 @@ def get_expiring_products(db: Session, days: int = 30):
     rows = db.query(models.Batch).filter(models.Batch.expiry_date <= threshold, models.Batch.expiry_date > date.today()).all()
     return rows
 
+# Additional CRUD functions for enhanced features
+def get_batch_traceability(db: Session):
+    """
+    Get batch-level inventory and regulatory traceability data.
+    """
+    from sqlalchemy import func
+    result = db.query(
+        models.Batch.b_id,
+        models.Batch.p_id,
+        models.Product.medicine_name,
+        models.Supplier.firm_name.label('supplier_name'),
+        models.Batch.received_on.label('purchase_date'),
+        models.Batch.expiry_date,
+        models.Batch.qty_available.label('quantity'),
+        func.count(models.SaleItem.sale_id).label('sales_count')
+    ).join(models.Product, models.Batch.p_id == models.Product.p_id)\
+     .join(models.Supplier, models.Batch.s_id == models.Supplier.s_id)\
+     .outerjoin(models.SaleItem, models.Batch.b_id == models.SaleItem.b_id)\
+     .group_by(models.Batch.b_id).all()
+    
+    return [
+        {
+            'b_id': r.b_id,
+            'p_id': r.p_id,
+            'medicine_name': r.medicine_name,
+            'supplier_name': r.supplier_name,
+            'purchase_date': r.purchase_date,
+            'expiry_date': r.expiry_date,
+            'quantity': r.quantity,
+            'sales_count': r.sales_count or 0
+        }
+        for r in result
+    ]
+
+def search_products(db: Session, search: str = None, expiry_date: str = None, quantity: str = None):
+    """
+    Search products with advanced filtering.
+    """
+    query = db.query(models.Product)
+    
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            models.Product.medicine_name.ilike(search_term) |
+            models.Product.brand_name.ilike(search_term)
+        )
+    
+    if expiry_date:
+        query = query.join(models.Batch).filter(models.Batch.expiry_date == expiry_date)
+    
+    if quantity:
+        try:
+            qty = int(quantity)
+            query = query.join(models.Batch).filter(models.Batch.qty_available >= qty)
+        except ValueError:
+            pass
+    
+    return query.all()
+
+def search_customers(db: Session, search: str = None, bill_amount: str = None):
+    """
+    Search customers with analytics filtering.
+    """
+    from sqlalchemy import func
+    
+    query = db.query(
+        models.Customer.c_id,
+        models.Customer.name,
+        models.Customer.phone,
+        func.count(models.Sale.sb_id).label('total_purchases'),
+        func.avg(models.Sale.total).label('avg_bill_amount')
+    ).outerjoin(models.Sale, models.Customer.c_id == models.Sale.c_id)\
+     .group_by(models.Customer.c_id)
+    
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            models.Customer.name.ilike(search_term) |
+            models.Customer.phone.ilike(search_term)
+        )
+    
+    if bill_amount:
+        try:
+            amount = float(bill_amount)
+            query = query.having(func.avg(models.Sale.total) >= amount)
+        except ValueError:
+            pass
+    
+    return query.all()
+
+def get_sale_items(db: Session, sale_id: int):
+    """
+    Get all items for a specific sale.
+    """
+    return db.query(models.SaleItem).filter(models.SaleItem.sale_id == sale_id).all()
+
 # --- end added helpers ---

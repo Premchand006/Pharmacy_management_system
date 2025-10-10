@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Box, Typography, TextField, Button } from '@mui/material';
 
 const style = {
@@ -17,9 +17,10 @@ interface AddProductModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (product: any) => void;
+  editingProduct?: any;
 }
 
-export default function AddProductModal({ open, onClose, onSubmit }: AddProductModalProps) {
+export default function AddProductModal({ open, onClose, onSubmit, editingProduct }: AddProductModalProps) {
   const [product, setProduct] = useState({
     brand_name: '',
     medicine_name: '',
@@ -30,6 +31,32 @@ export default function AddProductModal({ open, onClose, onSubmit }: AddProductM
     mrp: 0,
     unit_price: 0,
   });
+
+  useEffect(() => {
+    if (editingProduct) {
+      setProduct({
+        brand_name: editingProduct.brand_name || '',
+        medicine_name: editingProduct.medicine_name || '',
+        form: editingProduct.form || '',
+        strength: editingProduct.strength || '',
+        packing: editingProduct.packing || '',
+        prescription_type: editingProduct.prescription_type || 'OTC',
+        mrp: editingProduct.mrp || 0,
+        unit_price: editingProduct.unit_price || 0,
+      });
+    } else {
+      setProduct({
+        brand_name: '',
+        medicine_name: '',
+        form: '',
+        strength: '',
+        packing: '',
+        prescription_type: 'OTC',
+        mrp: 0,
+        unit_price: 0,
+      });
+    }
+  }, [editingProduct, open]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,7 +75,7 @@ export default function AddProductModal({ open, onClose, onSubmit }: AddProductM
     >
       <Box sx={style}>
         <Typography id="add-product-modal-title" variant="h6" component="h2">
-          Add New Product
+          {editingProduct ? 'Edit Product' : 'Add New Product'}
         </Typography>
         <TextField margin="dense" name="brand_name" label="Brand Name" fullWidth value={product.brand_name} onChange={handleChange} />
         <TextField margin="dense" name="medicine_name" label="Medicine Name" fullWidth value={product.medicine_name} onChange={handleChange} />
@@ -59,7 +86,9 @@ export default function AddProductModal({ open, onClose, onSubmit }: AddProductM
         <TextField margin="dense" name="unit_price" label="Unit Price" type="number" fullWidth value={product.unit_price} onChange={handleChange} />
         <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
           <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" sx={{ ml: 1 }}>Add</Button>
+          <Button onClick={handleSubmit} variant="contained" sx={{ ml: 1 }}>
+            {editingProduct ? 'Update' : 'Add'}
+          </Button>
         </Box>
       </Box>
     </Modal>

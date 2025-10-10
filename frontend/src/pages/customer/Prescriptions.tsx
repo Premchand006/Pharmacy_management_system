@@ -80,15 +80,23 @@ export default function PrescriptionsPage() {
           <Typography variant="subtitle1">Items for Prescription {showItemsFor}</Typography>
           <Table>
             <TableHead>
-              <TableRow><TableCell>Line</TableCell><TableCell>Product</TableCell><TableCell>Qty</TableCell><TableCell>Dosage</TableCell></TableRow>
+              <TableRow><TableCell>Line</TableCell><TableCell>Product ID</TableCell><TableCell>Medicine Name</TableCell><TableCell>Qty</TableCell><TableCell>Dosage</TableCell><TableCell>Duration</TableCell><TableCell>Instructions</TableCell></TableRow>
             </TableHead>
             <TableBody>
               {(() => {
                 const pres = prescriptions.find(p => p.pres_id === showItemsFor);
                 const items = pres?.items || [];
-                if (!items.length) return <TableRow><TableCell colSpan={4}>No items available</TableCell></TableRow>;
+                if (!items.length) return <TableRow><TableCell colSpan={7}>No items available</TableCell></TableRow>;
                 return items.map((it:any, i:number) => (
-                  <TableRow key={i}><TableCell>{it.line_no || i+1}</TableCell><TableCell>{it.product_id}</TableCell><TableCell>{it.qty}</TableCell><TableCell>{it.dosage}</TableCell></TableRow>
+                  <TableRow key={i}>
+                    <TableCell>{it.line_no || i+1}</TableCell>
+                    <TableCell>{it.product_id}</TableCell>
+                    <TableCell>{it.medicine_name || 'Loading...'}</TableCell>
+                    <TableCell>{it.qty}</TableCell>
+                    <TableCell>{it.dosage}</TableCell>
+                    <TableCell>{it.duration}</TableCell>
+                    <TableCell>{it.instructions}</TableCell>
+                  </TableRow>
                 ));
               })()}
             </TableBody>

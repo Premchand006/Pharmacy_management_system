@@ -10,12 +10,12 @@ export default function AdminDashboard() {
     <Box>
       <Typography variant="h5">Admin / Supplier Dashboard</Typography>
       <Typography sx={{ mb: 2 }}>ID: {s_id}</Typography>
-      <Stack spacing={1} direction="column">
-        <Button variant="outlined" component={Link} to="/admin/products">Products</Button>
-        <Button variant="outlined" component={Link} to="/admin/employees">Employees</Button>
-        <Button variant="outlined" component={Link} to="/admin/batches">Batches</Button>
-        <Button variant="outlined" component={Link} to="/admin/customers">Customers</Button>
-        <Button variant="outlined" component={Link} to="/admin/sales">Sales</Button>
+      <Stack spacing={2} direction="column" sx={{ mt: 3 }}>
+        <Button variant="contained" size="large" component={Link} to="/admin/employees">Employees</Button>
+        <Button variant="contained" size="large" component={Link} to="/admin/products">Products</Button>
+        <Button variant="contained" size="large" component={Link} to="/admin/customers">Customers</Button>
+        <Button variant="contained" size="large" component={Link} to="/admin/sales">Sales</Button>
+        <Button variant="contained" size="large" component={Link} to="/admin/reports">Reports</Button>
       </Stack>
     </Box>
   );

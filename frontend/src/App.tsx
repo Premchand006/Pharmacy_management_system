@@ -32,7 +32,7 @@ function App() {
             <Button color="inherit" component={Link} to="/register">Create New</Button>
           </Toolbar>
         </AppBar>
-        <Container sx={{ mt: 3 }}>
+        <Container sx={{ mt: 3 }} className="app-container">
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />

@@ -32,6 +32,7 @@ const apiClient = {
   // Prescriptions
   createPrescription: (payload: any) => api.post(`${API_PREFIX}/prescriptions/`, payload),
   getCustomerPrescriptions: (customerId: number) => api.get(`${API_PREFIX}/prescriptions/customer/${customerId}`),
+  getPrescriptionsByCustomer: (customerId: number) => api.get(`${API_PREFIX}/prescriptions/customer/${customerId}`),
 
   // Batches
   createBatch: (payload: any) => api.post(`${API_PREFIX}/batches/`, payload),
@@ -42,6 +43,7 @@ const apiClient = {
   getSales: () => api.get(`${API_PREFIX}/sales/`),
   getCustomerSales: (customerId: number) => api.get(`${API_PREFIX}/sales/customer/${customerId}`),
   getFilteredSales: (params: any) => api.get(`${API_PREFIX}/sales/filter/`, { params }),
+  getSaleItems: (saleId: number) => api.get(`${API_PREFIX}/sales/${saleId}/items`),
 
   // Purchases
   createPurchase: (payload: any) => api.post(`${API_PREFIX}/purchases/`, payload),
@@ -51,6 +53,9 @@ const apiClient = {
   getNearExpiryReport: (days: number) => api.get(`${API_PREFIX}/reports/near-expiry?days=${days}`),
   getStockReport: () => api.get(`${API_PREFIX}/reports/stock`),
   getTopSellingProductsReport: (limit: number) => api.get(`${API_PREFIX}/reports/top-selling?limit=${limit}`),
+  getBatchTraceability: () => api.get(`${API_PREFIX}/reports/batch-traceability`),
+  searchProducts: (params: string) => api.get(`${API_PREFIX}/reports/search-products?${params}`),
+  searchCustomers: (params: string) => api.get(`${API_PREFIX}/reports/search-customers?${params}`),
 };
 
 export default apiClient;

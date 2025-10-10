@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Box, Typography, TextField, Button } from '@mui/material';
 
 const style = {
@@ -17,9 +17,10 @@ interface AddEmployeeModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (employee: any) => void;
+  editingEmployee?: any;
 }
 
-export default function AddEmployeeModal({ open, onClose, onSubmit }: AddEmployeeModalProps) {
+export default function AddEmployeeModal({ open, onClose, onSubmit, editingEmployee }: AddEmployeeModalProps) {
   const [employee, setEmployee] = useState({
     name: '',
     salary: 0,
@@ -27,6 +28,26 @@ export default function AddEmployeeModal({ open, onClose, onSubmit }: AddEmploye
     role: '',
     experience: 0,
   });
+
+  useEffect(() => {
+    if (editingEmployee) {
+      setEmployee({
+        name: editingEmployee.name || '',
+        salary: editingEmployee.salary || 0,
+        work_shift: editingEmployee.work_shift || '',
+        role: editingEmployee.role || '',
+        experience: editingEmployee.experience || 0,
+      });
+    } else {
+      setEmployee({
+        name: '',
+        salary: 0,
+        work_shift: '',
+        role: '',
+        experience: 0,
+      });
+    }
+  }, [editingEmployee, open]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,7 +66,7 @@ export default function AddEmployeeModal({ open, onClose, onSubmit }: AddEmploye
     >
       <Box sx={style}>
         <Typography id="add-employee-modal-title" variant="h6" component="h2">
-          Add New Employee
+          {editingEmployee ? 'Edit Employee' : 'Add New Employee'}
         </Typography>
         <TextField margin="dense" name="name" label="Name" fullWidth value={employee.name} onChange={handleChange} />
         <TextField margin="dense" name="salary" label="Salary" type="number" fullWidth value={employee.salary} onChange={handleChange} />
@@ -54,7 +75,9 @@ export default function AddEmployeeModal({ open, onClose, onSubmit }: AddEmploye
         <TextField margin="dense" name="experience" label="Experience (years)" type="number" fullWidth value={employee.experience} onChange={handleChange} />
         <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
           <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" sx={{ ml: 1 }}>Add</Button>
+          <Button onClick={handleSubmit} variant="contained" sx={{ ml: 1 }}>
+            {editingEmployee ? 'Update' : 'Add'}
+          </Button>
         </Box>
       </Box>
     </Modal>

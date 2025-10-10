@@ -41,3 +41,10 @@ def read_filtered_sales(
         customer_id=customer_id
     )
     return sales
+
+@router.get("/sales/{sale_id}/items")
+def get_sale_items(sale_id: int, db: Session = Depends(get_db)):
+    """
+    Get all items for a specific sale.
+    """
+    return crud.get_sale_items(db=db, sale_id=sale_id)
