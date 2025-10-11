@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Prescription Items - Pharmacy Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">Prescription Items</h2>
+    <a href="{{ url_for('customer_prescriptions') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Prescriptions
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">
+            <i class="fas fa-info-circle"></i> Prescription Details
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <h6 class="text-primary">Prescription ID</h6>
+                <p class="mb-0"><span class="badge bg-primary">#{{ prescription.pres_id }}</span></p>
+            </div>
+            <div class="col-md-3">
+                <h6 class="text-primary">Doctor</h6>
+                <p class="mb-0">{{ prescription.dr_id }}</p>
+            </div>
+            <div class="col-md-3">
+                <h6 class="text-primary">Date</h6>
+                <p class="mb-0">{{ prescription.date.strftime('%Y-%m-%d') }}</p>
+            </div>
+            <div class="col-md-3">
+                <h6 class="text-primary">Hospital</h6>
+                <p class="mb-0">{{ prescription.hospital_name }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if items %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="fas fa-pills"></i> Prescribed Medicines</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Line #</th>
+                        <th>Medicine</th>
+                        <th>Brand</th>
+                        <th>Dosage</th>
+                        <th>Duration</th>
+                        <th>Quantity</th>
+                        <th>Instructions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td><span class="badge bg-secondary">{{ item.line_no }}</span></td>
+                        <td>
+                            <strong>{{ item.product.medicine_name }}</strong><br>
+                            <small class="text-muted">{{ item.product.form }} - {{ item.product.strength }}</small>
+                        </td>
+                        <td>{{ item.product.brand_name }}</td>
+                        <td><span class="badge bg-info">{{ item.dosage }}</span></td>
+                        <td><span class="badge bg-warning">{{ item.duration }}</span></td>
+                        <td><span class="badge bg-success">{{ item.qty }}</span></td>
+                        <td>
+                            {% if item.instructions %}
+                                <small class="text-muted">{{ item.instructions }}</small>
+                            {% else %}
+                                <small class="text-muted">No special instructions</small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <div class="card">
+        <div class="card-body">
+            <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+            <h4 class="text-muted">No Items Found</h4>
+            <p class="text-muted">This prescription doesn't have any items.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

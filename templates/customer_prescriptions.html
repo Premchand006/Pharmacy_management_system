@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}My Prescriptions - Pharmacy Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">My Prescriptions</h2>
+    <a href="{{ url_for('customer_dashboard') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+{% if prescriptions %}
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Prescription ID</th>
+                        <th>Doctor ID</th>
+                        <th>Doctor License</th>
+                        <th>Date</th>
+                        <th>Validity</th>
+                        <th>Hospital</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prescription in prescriptions %}
+                    <tr>
+                        <td><span class="badge bg-primary">#{{ prescription.pres_id }}</span></td>
+                        <td>{{ prescription.dr_id }}</td>
+                        <td>{{ prescription.doctor_license_no }}</td>
+                        <td>{{ prescription.date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if prescription.validity >= date.today() %}
+                                <span class="badge bg-success">{{ prescription.validity.strftime('%Y-%m-%d') }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ prescription.validity.strftime('%Y-%m-%d') }} (Expired)</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ prescription.hospital_name }}</td>
+                        <td>
+                            <a href="{{ url_for('prescription_items', prescription_id=prescription.pres_id) }}" 
+                               class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i> View Items
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <div class="card">
+        <div class="card-body">
+            <i class="fas fa-prescription-bottle fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">No Prescriptions Found</h4>
+            <p class="text-muted">You don't have any prescriptions yet.</p>
+            <a href="{{ url_for('add_prescription') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Your First Prescription
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

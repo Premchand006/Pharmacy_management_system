@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Login - Pharmacy Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4><i class="fas fa-user-circle"></i> Customer Login</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="customer_id" class="form-label">Customer ID</label>
+                        <input type="number" class="form-control" id="customer_id" name="customer_id" 
+                               placeholder="Enter your Customer ID" required>
+                        <div class="form-text">Enter your registered Customer ID to access your account.</div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg hover-effect">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('index') }}" class="text-muted">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-3">
+            <small class="text-muted">
+                Don't have a Customer ID? Contact the pharmacy to register.
+            </small>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - Pharmacy Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">Business Reports</h2>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<!-- Current Stock Summary -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="fas fa-boxes"></i> Current Stock Summary</h5>
+    </div>
+    <div class="card-body">
+        {% if stock_data %}
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>Brand Name</th>
+                        <th>Medicine Name</th>
+                        <th>Total Stock Available</th>
+                        <th>Nearest Expiry Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in stock_data %}
+                    <tr>
+                        <td><strong>{{ stock.brand_name }}</strong></td>
+                        <td>{{ stock.medicine_name }}</td>
+                        <td>
+                            {% if stock.total_stock < 10 %}
+                                <span class="badge bg-danger">{{ stock.total_stock }} units (Low Stock)</span>
+                            {% elif stock.total_stock < 50 %}
+                                <span class="badge bg-warning">{{ stock.total_stock }} units</span>
+                            {% else %}
+                                <span class="badge bg-success">{{ stock.total_stock }} units</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if stock.nearest_expiry %}
+                                {{ stock.nearest_expiry.strftime('%Y-%m-%d') }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center text-muted">No stock data available</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Near Expiry Items -->
+<div class="card mb-4">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Near Expiry Items (Within 30 Days)</h5>
+    </div>
+    <div class="card-body">
+        {% if near_expiry %}
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>Brand Name</th>
+                        <th>Medicine Name</th>
+                        <th>Batch Number</th>
+                        <th>Expiry Date</th>
+                        <th>Available Quantity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in near_expiry %}
+                    <tr>
+                        <td><strong>{{ item.brand_name }}</strong></td>
+                        <td>{{ item.medicine_name }}</td>
+                        <td><span class="badge bg-secondary">{{ item.batch_no }}</span></td>
+                        <td>
+                            {% set days_to_expiry = (item.expiry_date - date.today()).days %}
+                            {% if days_to_expiry <= 7 %}
+                                <span class="badge bg-danger">{{ item.expiry_date.strftime('%Y-%m-%d') }}</span>
+                            {% elif days_to_expiry <= 15 %}
+                                <span class="badge bg-warning">{{ item.expiry_date.strftime('%Y-%m-%d') }}</span>
+                            {% else %}
+                                <span class="badge bg-info">{{ item.expiry_date.strftime('%Y-%m-%d') }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ item.qty_available }} units</td>
+                        <td>
+                            {% if days_to_expiry <= 7 %}
+                                <span class="badge bg-danger">Critical</span>
+                            {% elif days_to_expiry <= 15 %}
+                                <span class="badge bg-warning">Warning</span>
+                            {% else %}
+                                <span class="badge bg-info">Monitor</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-success mb-0">
+            <i class="fas fa-check-circle"></i> No items expiring within the next 30 days.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Top Selling Medicines -->
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="fas fa-star"></i> Top Selling Medicines (Top 10)</h5>
+    </div>
+    <div class="card-body">
+        {% if top_selling %}
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Brand Name</th>
+                        <th>Medicine Name</th>
+                        <th>Total Units Sold</th>
+                        <th>Performance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in top_selling %}
+                    <tr>
+                        <td>
+                            {% if loop.index == 1 %}
+                                <span class="badge bg-warning">🥇 {{ loop.index }}</span>
+                            {% elif loop.index == 2 %}
+                                <span class="badge bg-secondary">🥈 {{ loop.index }}</span>
+                            {% elif loop.index == 3 %}
+                                <span class="badge bg-warning" style="background-color: #CD7F32 !important;">🥉 {{ loop.index }}</span>
+                            {% else %}
+                                <span class="badge bg-primary">{{ loop.index }}</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ item.brand_name }}</strong></td>
+                        <td>{{ item.medicine_name }}</td>
+                        <td><span class="badge bg-success">{{ item.total_sold }} units</span></td>
+                        <td>
+                            <div class="progress" style="height: 20px;">
+                                {% set max_sold = top_selling[0].total_sold %}
+                                {% set percentage = (item.total_sold / max_sold * 100)|round|int %}
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: {{ percentage }}%;" 
+                                     aria-valuenow="{{ percentage }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    {{ percentage }}%
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center text-muted">No sales data available</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Batch to Sale Traceability -->
+<div class="card mt-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="fas fa-link"></i> Batch → Sale → Prescription Traceability</h5>
+    </div>
+    <div class="card-body">
+        <p class="mb-3">The system maintains complete traceability from batch receipt through sales to prescriptions:</p>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <i class="fas fa-box fa-2x text-primary mb-2"></i>
+                        <h6>Batch Level</h6>
+                        <p class="small mb-0">Tracks batch number, expiry dates, and quantities from suppliers</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shopping-cart fa-2x text-success mb-2"></i>
+                        <h6>Sale Level</h6>
+                        <p class="small mb-0">Links specific batches to customer sales with full transaction details</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <i class="fas fa-prescription fa-2x text-warning mb-2"></i>
+                        <h6>Prescription Level</h6>
+                        <p class="small mb-0">Connects sales to doctor prescriptions for regulatory compliance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-info mt-3 mb-0">
+            <i class="fas fa-info-circle"></i>
+            <strong>Regulatory Compliance:</strong> This traceability ensures full compliance with pharmaceutical regulations 
+            and enables quick recall procedures if needed.
+        </div>
+    </div>
+</div>
+{% endblock %}

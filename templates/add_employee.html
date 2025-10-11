@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Add Employee - Pharmacy Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">Add New Employee</h2>
+    <a href="{{ url_for('admin_employees') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Employees
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-user-plus"></i> Employee Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="salary" class="form-label">Salary</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="salary" name="salary" 
+                                           step="0.01" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="work_shift" class="form-label">Work Shift</label>
+                                <select class="form-control" id="work_shift" name="work_shift" required>
+                                    <option value="">Select Shift</option>
+                                    <option value="Morning">Morning (6 AM - 2 PM)</option>
+                                    <option value="Evening">Evening (2 PM - 10 PM)</option>
+                                    <option value="Night">Night (10 PM - 6 AM)</option>
+                                    <option value="Full Day">Full Day (9 AM - 6 PM)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="role" class="form-label">Role</label>
+                                <select class="form-control" id="role" name="role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="Pharmacist">Pharmacist</option>
+                                    <option value="Assistant Pharmacist">Assistant Pharmacist</option>
+                                    <option value="Store Manager">Store Manager</option>
+                                    <option value="Sales Associate">Sales Associate</option>
+                                    <option value="Inventory Clerk">Inventory Clerk</option>
+                                    <option value="Cashier">Cashier</option>
+                                    <option value="Manager">Manager</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="experience" class="form-label">Experience (Years)</label>
+                                <input type="number" class="form-control" id="experience" name="experience" 
+                                       min="0" max="50" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-save"></i> Add Employee
+                        </button>
+                        <a href="{{ url_for('admin_employees') }}" class="btn btn-secondary btn-lg ms-2">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Guidelines</h5>
+            </div>
+            <div class="card-body">
+                <h6>Employee Registration</h6>
+                <ul class="small">
+                    <li>Enter full legal name</li>
+                    <li>Salary should include base pay</li>
+                    <li>Select appropriate work shift</li>
+                    <li>Choose role based on qualifications</li>
+                    <li>Include total years of experience</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Role Descriptions</h6>
+                <ul class="small">
+                    <li><strong>Pharmacist:</strong> Licensed to dispense medications</li>
+                    <li><strong>Assistant:</strong> Supports pharmacist operations</li>
+                    <li><strong>Manager:</strong> Oversees store operations</li>
+                    <li><strong>Sales Associate:</strong> Customer service and sales</li>
+                    <li><strong>Inventory Clerk:</strong> Manages stock and supplies</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
