@@ -173,7 +173,11 @@ def admin_login():
 def admin_dashboard():
     if session.get('user_type') != 'admin':
         return redirect(url_for('index'))
-    return render_template('admin_dashboard.html')
+    return render_template('admin_dashboard.html',
+                           Product=Product,
+                           Customer=Customer,
+                           Employee=Employee,
+                           Sale=Sale)
 
 # Employee management routes
 
