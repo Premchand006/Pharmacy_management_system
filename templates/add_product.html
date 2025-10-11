@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product - Pharmacy Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">Add New Product</h2>
+    <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Products
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-pills"></i> Product Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="brand_name" class="form-label">Brand Name</label>
+                                <input type="text" class="form-control" id="brand_name" name="brand_name" 
+                                       placeholder="e.g., Tylenol" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="medicine_name" class="form-label">Medicine Name</label>
+                                <input type="text" class="form-control" id="medicine_name" name="medicine_name" 
+                                       placeholder="e.g., Paracetamol" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="form" class="form-label">Form</label>
+                                <select class="form-control" id="form" name="form" required>
+                                    <option value="">Select Form</option>
+                                    <option value="Tablet">Tablet</option>
+                                    <option value="Capsule">Capsule</option>
+                                    <option value="Syrup">Syrup</option>
+                                    <option value="Injection">Injection</option>
+                                    <option value="Cream">Cream</option>
+                                    <option value="Ointment">Ointment</option>
+                                    <option value="Drops">Drops</option>
+                                    <option value="Inhaler">Inhaler</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="strength" class="form-label">Strength</label>
+                                <input type="text" class="form-control" id="strength" name="strength" 
+                                       placeholder="e.g., 500mg" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="packing" class="form-label">Packing</label>
+                                <input type="text" class="form-control" id="packing" name="packing" 
+                                       placeholder="e.g., Strip of 10" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="prescription_type" class="form-label">Prescription Type</label>
+                                <select class="form-control" id="prescription_type" name="prescription_type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="OTC">OTC (Over The Counter)</option>
+                                    <option value="Prescription">Prescription Required</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="mrp" class="form-label">MRP (Maximum Retail Price)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="mrp" name="mrp" 
+                                           step="0.01" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="unit_price" class="form-label">Unit Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="unit_price" name="unit_price" 
+                                           step="0.01" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-save"></i> Add Product
+                        </button>
+                        <a href="{{ url_for('admin_products') }}" class="btn btn-secondary btn-lg ms-2">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Guidelines</h5>
+            </div>
+            <div class="card-body">
+                <h6>Product Registration</h6>
+                <ul class="small">
+                    <li>Enter accurate brand and generic names</li>
+                    <li>Select appropriate form and strength</li>
+                    <li>Specify complete packing details</li>
+                    <li>Set correct prescription requirements</li>
+                    <li>Unit price should be less than MRP</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Form Examples</h6>
+                <ul class="small">
+                    <li><strong>Tablet:</strong> Solid oral dosage</li>
+                    <li><strong>Syrup:</strong> Liquid oral medicine</li>
+                    <li><strong>Injection:</strong> Injectable solution</li>
+                    <li><strong>Cream:</strong> Topical application</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Prescription Types</h6>
+                <ul class="small">
+                    <li><strong>OTC:</strong> Can be sold without prescription</li>
+                    <li><strong>Prescription:</strong> Requires valid doctor's prescription</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Product - Pharmacy Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">Edit Product</h2>
+    <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Products
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-edit"></i> Edit Product Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="brand_name" class="form-label">Brand Name</label>
+                                <input type="text" class="form-control" id="brand_name" name="brand_name" 
+                                       value="{{ product.brand_name }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="medicine_name" class="form-label">Medicine Name</label>
+                                <input type="text" class="form-control" id="medicine_name" name="medicine_name" 
+                                       value="{{ product.medicine_name }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="form" class="form-label">Form</label>
+                                <select class="form-control" id="form" name="form" required>
+                                    <option value="">Select Form</option>
+                                    <option value="Tablet" {{ 'selected' if product.form == 'Tablet' else '' }}>Tablet</option>
+                                    <option value="Capsule" {{ 'selected' if product.form == 'Capsule' else '' }}>Capsule</option>
+                                    <option value="Syrup" {{ 'selected' if product.form == 'Syrup' else '' }}>Syrup</option>
+                                    <option value="Injection" {{ 'selected' if product.form == 'Injection' else '' }}>Injection</option>
+                                    <option value="Cream" {{ 'selected' if product.form == 'Cream' else '' }}>Cream</option>
+                                    <option value="Ointment" {{ 'selected' if product.form == 'Ointment' else '' }}>Ointment</option>
+                                    <option value="Drops" {{ 'selected' if product.form == 'Drops' else '' }}>Drops</option>
+                                    <option value="Inhaler" {{ 'selected' if product.form == 'Inhaler' else '' }}>Inhaler</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="strength" class="form-label">Strength</label>
+                                <input type="text" class="form-control" id="strength" name="strength" 
+                                       value="{{ product.strength }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="packing" class="form-label">Packing</label>
+                                <input type="text" class="form-control" id="packing" name="packing" 
+                                       value="{{ product.packing }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="prescription_type" class="form-label">Prescription Type</label>
+                                <select class="form-control" id="prescription_type" name="prescription_type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="OTC" {{ 'selected' if product.prescription_type == 'OTC' else '' }}>
+                                        OTC (Over The Counter)
+                                    </option>
+                                    <option value="Prescription" {{ 'selected' if product.prescription_type == 'Prescription' else '' }}>
+                                        Prescription Required
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="mrp" class="form-label">MRP (Maximum Retail Price)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="mrp" name="mrp" 
+                                           step="0.01" min="0" value="{{ product.mrp }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="unit_price" class="form-label">Unit Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="unit_price" name="unit_price" 
+                                           step="0.01" min="0" value="{{ product.unit_price }}" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="fas fa-save"></i> Update Product
+                        </button>
+                        <a href="{{ url_for('admin_products') }}" class="btn btn-secondary btn-lg ms-2">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-pills"></i> Product Details</h5>
+            </div>
+            <div class="card-body">
+                <h6>Current Information</h6>
+                <ul class="list-unstyled">
+                    <li><strong>Product ID:</strong> #{{ product.p_id }}</li>
+                    <li><strong>Brand:</strong> {{ product.brand_name }}</li>
+                    <li><strong>Medicine:</strong> {{ product.medicine_name }}</li>
+                    <li><strong>Form:</strong> {{ product.form }}</li>
+                    <li><strong>Strength:</strong> {{ product.strength }}</li>
+                    <li><strong>Packing:</strong> {{ product.packing }}</li>
+                    <li><strong>Type:</strong> {{ product.prescription_type }}</li>
+                    <li><strong>MRP:</strong> ${{ "%.2f"|format(product.mrp) }}</li>
+                    <li><strong>Unit Price:</strong> ${{ "%.2f"|format(product.unit_price) }}</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Update Guidelines</h6>
+                <ul class="small">
+                    <li>Verify all changes before saving</li>
+                    <li>Price changes affect existing stock</li>
+                    <li>Form/strength changes need verification</li>
+                    <li>Check prescription type requirements</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
