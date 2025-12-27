@@ -2,28 +2,57 @@
 
 {% block title %}Edit Employee - Pharmacy Management System{% endblock %}
 
+{% block extra_css %}
+<style>
+    .form-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+    }
+
+    .form-control,
+    .form-select,
+    .input-group-text {
+        background-color: rgba(17, 25, 40, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: rgba(17, 25, 40, 0.8) !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+    }
+
+    .input-group-text {
+        color: #aaa !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-primary">Edit Employee</h2>
-    <a href="{{ url_for('admin_employees') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Employees
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+    <h2 class="text-primary fw-bold">Edit Employee</h2>
+    <a href="{{ url_for('admin.admin_employees') }}" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left me-2"></i> Back to Employees
     </a>
 </div>
 
-<div class="row">
+<div class="row g-4 animate-fade-in">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0"><i class="fas fa-user-edit"></i> Edit Employee Information</h5>
+        <div class="glass-card">
+            <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                <h5 class="mb-0 text-white"><i class="fas fa-user-edit text-warning me-2"></i> Edit Employee Information
+                </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form method="POST">
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="name" name="name" 
-                                       value="{{ employee.name }}" required>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    value="{{ employee.name }}" required>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -31,29 +60,33 @@
                                 <label for="salary" class="form-label">Salary</label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="salary" name="salary" 
-                                           step="0.01" min="0" value="{{ employee.salary }}" required>
+                                    <input type="number" class="form-control" id="salary" name="salary" step="0.01"
+                                        min="0" value="{{ employee.salary }}" required>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
+
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="work_shift" class="form-label">Work Shift</label>
-                                <select class="form-control" id="work_shift" name="work_shift" required>
-                                    <option value="">Select Shift</option>
-                                    <option value="Morning" {{ 'selected' if employee.work_shift == 'Morning' else '' }}>
+                                <select class="form-select form-control" id="work_shift" name="work_shift" required>
+                                    <option value="" class="text-dark">Select Shift</option>
+                                    <option value="Morning" {{ 'selected' if employee.work_shift=='Morning' else '' }}
+                                        class="text-dark">
                                         Morning (6 AM - 2 PM)
                                     </option>
-                                    <option value="Evening" {{ 'selected' if employee.work_shift == 'Evening' else '' }}>
+                                    <option value="Evening" {{ 'selected' if employee.work_shift=='Evening' else '' }}
+                                        class="text-dark">
                                         Evening (2 PM - 10 PM)
                                     </option>
-                                    <option value="Night" {{ 'selected' if employee.work_shift == 'Night' else '' }}>
+                                    <option value="Night" {{ 'selected' if employee.work_shift=='Night' else '' }}
+                                        class="text-dark">
                                         Night (10 PM - 6 AM)
                                     </option>
-                                    <option value="Full Day" {{ 'selected' if employee.work_shift == 'Full Day' else '' }}>
+                                    <option value="Full Day" {{ 'selected' if employee.work_shift=='Full Day' else '' }}
+                                        class="text-dark">
                                         Full Day (9 AM - 6 PM)
                                     </option>
                                 </select>
@@ -62,49 +95,56 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="role" class="form-label">Role</label>
-                                <select class="form-control" id="role" name="role" required>
-                                    <option value="">Select Role</option>
-                                    <option value="Pharmacist" {{ 'selected' if employee.role == 'Pharmacist' else '' }}>
+                                <select class="form-select form-control" id="role" name="role" required>
+                                    <option value="" class="text-dark">Select Role</option>
+                                    <option value="Pharmacist" {{ 'selected' if employee.role=='Pharmacist' else '' }}
+                                        class="text-dark">
                                         Pharmacist
                                     </option>
-                                    <option value="Assistant Pharmacist" {{ 'selected' if employee.role == 'Assistant Pharmacist' else '' }}>
+                                    <option value="Assistant Pharmacist" {{ 'selected' if
+                                        employee.role=='Assistant Pharmacist' else '' }} class="text-dark">
                                         Assistant Pharmacist
                                     </option>
-                                    <option value="Store Manager" {{ 'selected' if employee.role == 'Store Manager' else '' }}>
+                                    <option value="Store Manager" {{ 'selected' if employee.role=='Store Manager'
+                                        else '' }} class="text-dark">
                                         Store Manager
                                     </option>
-                                    <option value="Sales Associate" {{ 'selected' if employee.role == 'Sales Associate' else '' }}>
+                                    <option value="Sales Associate" {{ 'selected' if employee.role=='Sales Associate'
+                                        else '' }} class="text-dark">
                                         Sales Associate
                                     </option>
-                                    <option value="Inventory Clerk" {{ 'selected' if employee.role == 'Inventory Clerk' else '' }}>
+                                    <option value="Inventory Clerk" {{ 'selected' if employee.role=='Inventory Clerk'
+                                        else '' }} class="text-dark">
                                         Inventory Clerk
                                     </option>
-                                    <option value="Cashier" {{ 'selected' if employee.role == 'Cashier' else '' }}>
+                                    <option value="Cashier" {{ 'selected' if employee.role=='Cashier' else '' }}
+                                        class="text-dark">
                                         Cashier
                                     </option>
-                                    <option value="Manager" {{ 'selected' if employee.role == 'Manager' else '' }}>
+                                    <option value="Manager" {{ 'selected' if employee.role=='Manager' else '' }}
+                                        class="text-dark">
                                         Manager
                                     </option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
+
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="experience" class="form-label">Experience (Years)</label>
-                                <input type="number" class="form-control" id="experience" name="experience" 
-                                       min="0" max="50" value="{{ employee.experience }}" required>
+                                <input type="number" class="form-control" id="experience" name="experience" min="0"
+                                    max="50" value="{{ employee.experience }}" required>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-warning btn-lg">
-                            <i class="fas fa-save"></i> Update Employee
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-warning btn-lg px-5">
+                            <i class="fas fa-save me-2"></i> Update Employee
                         </button>
-                        <a href="{{ url_for('admin_employees') }}" class="btn btn-secondary btn-lg ms-2">
+                        <a href="{{ url_for('admin.admin_employees') }}" class="btn btn-outline-light btn-lg ms-2">
                             Cancel
                         </a>
                     </div>
@@ -112,27 +152,27 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="fas fa-user"></i> Employee Details</h5>
+        <div class="glass-card">
+            <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                <h5 class="mb-0 text-white"><i class="fas fa-user text-info me-2"></i> Employee Details</h5>
             </div>
-            <div class="card-body">
-                <h6>Current Information</h6>
-                <ul class="list-unstyled">
-                    <li><strong>ID:</strong> #{{ employee.e_id }}</li>
-                    <li><strong>Name:</strong> {{ employee.name }}</li>
-                    <li><strong>Current Salary:</strong> ${{ "%.2f"|format(employee.salary) }}</li>
-                    <li><strong>Shift:</strong> {{ employee.work_shift }}</li>
-                    <li><strong>Role:</strong> {{ employee.role }}</li>
-                    <li><strong>Experience:</strong> {{ employee.experience }} years</li>
+            <div class="card-body p-4">
+                <h6 class="text-white">Current Information</h6>
+                <ul class="list-unstyled text-gray-300">
+                    <li class="mb-2"><strong>ID:</strong> #{{ employee.e_id }}</li>
+                    <li class="mb-2"><strong>Name:</strong> {{ employee.name }}</li>
+                    <li class="mb-2"><strong>Current Salary:</strong> ${{ "%.2f"|format(employee.salary) }}</li>
+                    <li class="mb-2"><strong>Shift:</strong> {{ employee.work_shift }}</li>
+                    <li class="mb-2"><strong>Role:</strong> {{ employee.role }}</li>
+                    <li class="mb-2"><strong>Experience:</strong> {{ employee.experience }} years</li>
                 </ul>
-                
-                <hr>
-                
-                <h6>Update Guidelines</h6>
-                <ul class="small">
+
+                <hr class="border-secondary my-4">
+
+                <h6 class="text-white">Update Guidelines</h6>
+                <ul class="small text-gray-300">
                     <li>Verify all information before saving</li>
                     <li>Salary changes may affect payroll</li>
                     <li>Role changes may require training</li>

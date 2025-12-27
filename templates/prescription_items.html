@@ -3,52 +3,53 @@
 {% block title %}Prescription Items - Pharmacy Management System{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-primary">Prescription Items</h2>
-    <a href="{{ url_for('customer_prescriptions') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Prescriptions
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+    <h2 class="text-primary fw-bold">Prescription Items</h2>
+    <a href="{{ url_for('customer.customer_prescriptions') }}" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left me-2"></i> Back to Prescriptions
     </a>
 </div>
 
-<div class="card mb-4">
-    <div class="card-header bg-light">
-        <h5 class="mb-0">
-            <i class="fas fa-info-circle"></i> Prescription Details
+<div class="glass-card mb-4 animate-fade-in">
+    <div class="card-header border-bottom border-secondary bg-transparent py-3">
+        <h5 class="mb-0 text-white">
+            <i class="fas fa-info-circle text-info me-2"></i> Prescription Details
         </h5>
     </div>
-    <div class="card-body">
-        <div class="row">
+    <div class="card-body p-4">
+        <div class="row g-4">
             <div class="col-md-3">
-                <h6 class="text-primary">Prescription ID</h6>
-                <p class="mb-0"><span class="badge bg-primary">#{{ prescription.pres_id }}</span></p>
+                <h6 class="text-primary text-uppercase small ls-1">Prescription ID</h6>
+                <p class="mb-0"><span class="badge bg-primary bg-opacity-20 text-primary border border-primary">#{{
+                        prescription.pres_id }}</span></p>
             </div>
             <div class="col-md-3">
-                <h6 class="text-primary">Doctor</h6>
-                <p class="mb-0">{{ prescription.dr_id }}</p>
+                <h6 class="text-primary text-uppercase small ls-1">Doctor</h6>
+                <p class="mb-0 text-white">{{ prescription.dr_id }}</p>
             </div>
             <div class="col-md-3">
-                <h6 class="text-primary">Date</h6>
-                <p class="mb-0">{{ prescription.date.strftime('%Y-%m-%d') }}</p>
+                <h6 class="text-primary text-uppercase small ls-1">Date</h6>
+                <p class="mb-0 text-white">{{ prescription.date.strftime('%Y-%m-%d') }}</p>
             </div>
             <div class="col-md-3">
-                <h6 class="text-primary">Hospital</h6>
-                <p class="mb-0">{{ prescription.hospital_name }}</p>
+                <h6 class="text-primary text-uppercase small ls-1">Hospital</h6>
+                <p class="mb-0 text-white">{{ prescription.hospital_name }}</p>
             </div>
         </div>
     </div>
 </div>
 
 {% if items %}
-<div class="card">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0"><i class="fas fa-pills"></i> Prescribed Medicines</h5>
+<div class="glass-card animate-fade-in">
+    <div class="card-header border-bottom border-secondary bg-transparent py-3">
+        <h5 class="mb-0 text-white"><i class="fas fa-pills text-success me-2"></i> Prescribed Medicines</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-transparent border-bottom border-secondary">
                     <tr>
-                        <th>Line #</th>
+                        <th class="ps-4">Line #</th>
                         <th>Medicine</th>
                         <th>Brand</th>
                         <th>Dosage</th>
@@ -60,20 +61,25 @@
                 <tbody>
                     {% for item in items %}
                     <tr>
-                        <td><span class="badge bg-secondary">{{ item.line_no }}</span></td>
+                        <td class="ps-4"><span
+                                class="badge bg-secondary bg-opacity-20 text-secondary border border-secondary">{{
+                                item.line_no }}</span></td>
                         <td>
-                            <strong>{{ item.product.medicine_name }}</strong><br>
-                            <small class="text-muted">{{ item.product.form }} - {{ item.product.strength }}</small>
+                            <strong class="text-white">{{ item.product.medicine_name }}</strong><br>
+                            <small class="text-gray-400">{{ item.product.form }} - {{ item.product.strength }}</small>
                         </td>
-                        <td>{{ item.product.brand_name }}</td>
-                        <td><span class="badge bg-info">{{ item.dosage }}</span></td>
-                        <td><span class="badge bg-warning">{{ item.duration }}</span></td>
-                        <td><span class="badge bg-success">{{ item.qty }}</span></td>
-                        <td>
+                        <td class="text-white">{{ item.product.brand_name }}</td>
+                        <td><span class="badge bg-info bg-opacity-20 text-info border border-info">{{ item.dosage
+                                }}</span></td>
+                        <td><span class="badge bg-warning bg-opacity-20 text-warning border border-warning">{{
+                                item.duration }}</span></td>
+                        <td><span class="badge bg-success bg-opacity-20 text-success border border-success">{{ item.qty
+                                }}</span></td>
+                        <td class="text-gray-300">
                             {% if item.instructions %}
-                                <small class="text-muted">{{ item.instructions }}</small>
+                            {{ item.instructions }}
                             {% else %}
-                                <small class="text-muted">No special instructions</small>
+                            <em class="text-muted">No special instructions</em>
                             {% endif %}
                         </td>
                     </tr>
@@ -84,13 +90,16 @@
     </div>
 </div>
 {% else %}
-<div class="text-center py-5">
-    <div class="card">
-        <div class="card-body">
-            <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
-            <h4 class="text-muted">No Items Found</h4>
-            <p class="text-muted">This prescription doesn't have any items.</p>
+<div class="text-center py-5 animate-fade-in">
+    <div class="glass-card p-5 d-inline-block">
+        <div class="mb-4">
+            <div class="icon-circle bg-warning bg-opacity-20 text-warning mx-auto mb-3"
+                style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-exclamation-triangle fa-3x"></i>
+            </div>
         </div>
+        <h4 class="text-gray-300 mb-3">No Items Found</h4>
+        <p class="text-muted mb-0">This prescription doesn't have any items.</p>
     </div>
 </div>
 {% endif %}

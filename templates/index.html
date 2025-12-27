@@ -3,43 +3,46 @@
 {% block title %}Home - Pharmacy Management System{% endblock %}
 
 {% block content %}
-<div class="hero-section text-center py-5">
+<div class="hero-section text-center py-5 animate-fade-in">
     <div class="container">
-        <h1 class="display-4 text-primary mb-4">
-            <i class="fas fa-pills"></i> Pharmacy Management System
+        <h1 class="display-3 fw-bold mb-4 bg-gradient-primary text-transparent bg-clip-text">
+            Pharmacy Management System
         </h1>
-        <p class="lead mb-5">Comprehensive healthcare management solution for modern pharmacies</p>
-        
+        <p class="lead text-muted mb-5">Next-generation healthcare management for modern pharmacies.</p>
+
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="card login-card h-100 shadow-sm">
-                            <div class="card-body text-center p-4">
-                                <div class="mb-3">
-                                    <i class="fas fa-user-circle fa-3x text-primary"></i>
+            <div class="col-md-9">
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-6 col-lg-5">
+                        <div class="glass-card h-100 p-4 hover-lift">
+                            <div class="mb-4">
+                                <div class="icon-circle bg-primary bg-opacity-20 text-primary mx-auto mb-3"
+                                    style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-user-circle fa-3x"></i>
                                 </div>
-                                <h4 class="card-title">Customer Portal</h4>
-                                <p class="card-text text-muted">Access your prescriptions and medical history</p>
-                                <a href="{{ url_for('customer_login') }}" class="btn btn-primary btn-lg hover-effect">
-                                    Sign in as Customer
-                                </a>
                             </div>
+                            <h3 class="h4 mb-3">Customer Portal</h3>
+                            <p class="text-muted mb-4">View prescriptions, track orders, and manage your health profile.
+                            </p>
+                            <a href="{{ url_for('auth.customer_login') }}" class="btn btn-primary w-100">
+                                Customer Login
+                            </a>
                         </div>
                     </div>
-                    
-                    <div class="col-md-6">
-                        <div class="card login-card h-100 shadow-sm">
-                            <div class="card-body text-center p-4">
-                                <div class="mb-3">
-                                    <i class="fas fa-user-shield fa-3x text-primary"></i>
+
+                    <div class="col-md-6 col-lg-5">
+                        <div class="glass-card h-100 p-4 hover-lift">
+                            <div class="mb-4">
+                                <div class="icon-circle bg-success bg-opacity-20 text-success mx-auto mb-3"
+                                    style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-shield-alt fa-3x"></i>
                                 </div>
-                                <h4 class="card-title">Admin Portal</h4>
-                                <p class="card-text text-muted">Manage inventory, sales, and operations</p>
-                                <a href="{{ url_for('admin_login') }}" class="btn btn-primary btn-lg hover-effect">
-                                    Sign in as Admin
-                                </a>
                             </div>
+                            <h3 class="h4 mb-3">Admin Portal</h3>
+                            <p class="text-muted mb-4">Manage inventory, employees, analytics, and compliance.</p>
+                            <a href="{{ url_for('auth.admin_login') }}" class="btn btn-outline-light w-100">
+                                Admin Access
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -48,36 +51,35 @@
     </div>
 </div>
 
-<div class="features-section py-5 bg-light">
+<div class="features-section py-5">
     <div class="container">
-        <h2 class="text-center mb-5">Key Features</h2>
         <div class="row g-4">
             <div class="col-md-3">
-                <div class="text-center">
+                <div class="glass-card p-4 text-center h-100">
                     <i class="fas fa-prescription-bottle-alt fa-2x text-primary mb-3"></i>
-                    <h5>Prescription Management</h5>
-                    <p class="text-muted">Digital prescription tracking and management</p>
+                    <h5 class="mb-2">Smart Inventory</h5>
+                    <p class="text-muted small mb-0">Real-time batch tracking and expiry alerts.</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="text-center">
-                    <i class="fas fa-boxes fa-2x text-primary mb-3"></i>
-                    <h5>Inventory Control</h5>
-                    <p class="text-muted">Real-time stock monitoring and batch tracking</p>
+                <div class="glass-card p-4 text-center h-100">
+                    <i class="fas fa-notes-medical fa-2x text-success mb-3"></i>
+                    <h5 class="mb-2">Digital Rx</h5>
+                    <p class="text-muted small mb-0">Secure digital prescription management.</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="text-center">
-                    <i class="fas fa-chart-line fa-2x text-primary mb-3"></i>
-                    <h5>Sales Analytics</h5>
-                    <p class="text-muted">Comprehensive sales reports and insights</p>
+                <div class="glass-card p-4 text-center h-100">
+                    <i class="fas fa-chart-pie fa-2x text-warning mb-3"></i>
+                    <h5 class="mb-2">Analytics</h5>
+                    <p class="text-muted small mb-0">Deep insights into sales and performance.</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="text-center">
-                    <i class="fas fa-shield-alt fa-2x text-primary mb-3"></i>
-                    <h5>Regulatory Compliance</h5>
-                    <p class="text-muted">Ensure compliance with healthcare regulations</p>
+                <div class="glass-card p-4 text-center h-100">
+                    <i class="fas fa-history fa-2x text-info mb-3"></i>
+                    <h5 class="mb-2">Traceability</h5>
+                    <p class="text-muted small mb-0">Full audit trail from supplier to patient.</p>
                 </div>
             </div>
         </div>

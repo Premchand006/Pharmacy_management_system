@@ -2,23 +2,51 @@
 
 {% block title %}Add Employee - Pharmacy Management System{% endblock %}
 
+{% block extra_css %}
+<style>
+    .form-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+    }
+
+    .form-control,
+    .form-select,
+    .input-group-text {
+        background-color: rgba(17, 25, 40, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: rgba(17, 25, 40, 0.8) !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+    }
+
+    .input-group-text {
+        color: #aaa !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-primary">Add New Employee</h2>
-    <a href="{{ url_for('admin_employees') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Employees
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+    <h2 class="text-primary fw-bold">Add New Employee</h2>
+    <a href="{{ url_for('admin.admin_employees') }}" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left me-2"></i> Back to Employees
     </a>
 </div>
 
-<div class="row">
+<div class="row g-4 animate-fade-in">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-user-plus"></i> Employee Information</h5>
+        <div class="glass-card">
+            <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                <h5 class="mb-0 text-white"><i class="fas fa-user-plus text-primary me-2"></i> Employee Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form method="POST">
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Full Name</label>
@@ -30,58 +58,58 @@
                                 <label for="salary" class="form-label">Salary</label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="salary" name="salary" 
-                                           step="0.01" min="0" required>
+                                    <input type="number" class="form-control" id="salary" name="salary" step="0.01"
+                                        min="0" required>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
+
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="work_shift" class="form-label">Work Shift</label>
-                                <select class="form-control" id="work_shift" name="work_shift" required>
-                                    <option value="">Select Shift</option>
-                                    <option value="Morning">Morning (6 AM - 2 PM)</option>
-                                    <option value="Evening">Evening (2 PM - 10 PM)</option>
-                                    <option value="Night">Night (10 PM - 6 AM)</option>
-                                    <option value="Full Day">Full Day (9 AM - 6 PM)</option>
+                                <select class="form-select form-control" id="work_shift" name="work_shift" required>
+                                    <option value="" class="text-dark">Select Shift</option>
+                                    <option value="Morning" class="text-dark">Morning (6 AM - 2 PM)</option>
+                                    <option value="Evening" class="text-dark">Evening (2 PM - 10 PM)</option>
+                                    <option value="Night" class="text-dark">Night (10 PM - 6 AM)</option>
+                                    <option value="Full Day" class="text-dark">Full Day (9 AM - 6 PM)</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="role" class="form-label">Role</label>
-                                <select class="form-control" id="role" name="role" required>
-                                    <option value="">Select Role</option>
-                                    <option value="Pharmacist">Pharmacist</option>
-                                    <option value="Assistant Pharmacist">Assistant Pharmacist</option>
-                                    <option value="Store Manager">Store Manager</option>
-                                    <option value="Sales Associate">Sales Associate</option>
-                                    <option value="Inventory Clerk">Inventory Clerk</option>
-                                    <option value="Cashier">Cashier</option>
-                                    <option value="Manager">Manager</option>
+                                <select class="form-select form-control" id="role" name="role" required>
+                                    <option value="" class="text-dark">Select Role</option>
+                                    <option value="Pharmacist" class="text-dark">Pharmacist</option>
+                                    <option value="Assistant Pharmacist" class="text-dark">Assistant Pharmacist</option>
+                                    <option value="Store Manager" class="text-dark">Store Manager</option>
+                                    <option value="Sales Associate" class="text-dark">Sales Associate</option>
+                                    <option value="Inventory Clerk" class="text-dark">Inventory Clerk</option>
+                                    <option value="Cashier" class="text-dark">Cashier</option>
+                                    <option value="Manager" class="text-dark">Manager</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
+
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="experience" class="form-label">Experience (Years)</label>
-                                <input type="number" class="form-control" id="experience" name="experience" 
-                                       min="0" max="50" required>
+                                <input type="number" class="form-control" id="experience" name="experience" min="0"
+                                    max="50" required>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            <i class="fas fa-save"></i> Add Employee
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success btn-lg px-5">
+                            <i class="fas fa-save me-2"></i> Add Employee
                         </button>
-                        <a href="{{ url_for('admin_employees') }}" class="btn btn-secondary btn-lg ms-2">
+                        <a href="{{ url_for('admin.admin_employees') }}" class="btn btn-outline-light btn-lg ms-2">
                             Cancel
                         </a>
                     </div>
@@ -89,26 +117,26 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Guidelines</h5>
+        <div class="glass-card">
+            <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                <h5 class="mb-0 text-white"><i class="fas fa-info-circle text-info me-2"></i> Guidelines</h5>
             </div>
-            <div class="card-body">
-                <h6>Employee Registration</h6>
-                <ul class="small">
+            <div class="card-body p-4">
+                <h6 class="text-white">Employee Registration</h6>
+                <ul class="small text-gray-300">
                     <li>Enter full legal name</li>
                     <li>Salary should include base pay</li>
                     <li>Select appropriate work shift</li>
                     <li>Choose role based on qualifications</li>
                     <li>Include total years of experience</li>
                 </ul>
-                
-                <hr>
-                
-                <h6>Role Descriptions</h6>
-                <ul class="small">
+
+                <hr class="border-secondary my-4">
+
+                <h6 class="text-white">Role Descriptions</h6>
+                <ul class="small text-gray-300">
                     <li><strong>Pharmacist:</strong> Licensed to dispense medications</li>
                     <li><strong>Assistant:</strong> Supports pharmacist operations</li>
                     <li><strong>Manager:</strong> Oversees store operations</li>

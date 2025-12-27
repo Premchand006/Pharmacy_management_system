@@ -5,42 +5,69 @@
 {% block extra_css %}
 <style>
     .prescription-item {
-        border: 1px solid #dee2e6;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
-        background-color: #f8f9fa;
+        background-color: rgba(255, 255, 255, 0.05);
     }
+
     .item-header {
         display: flex;
         justify-content-between;
         align-items-center;
         margin-bottom: 1rem;
     }
+
     .remove-item {
-        color: #dc3545;
+        color: #ef4444;
         cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .remove-item:hover {
+        color: #dc2626;
+    }
+
+    .form-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: rgba(17, 25, 40, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: rgba(17, 25, 40, 0.8) !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-primary">Add New Prescription</h2>
-    <a href="{{ url_for('customer_dashboard') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Dashboard
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+    <h2 class="text-primary fw-bold">Add New Prescription</h2>
+    <a href="{{ url_for('customer.customer_dashboard') }}" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
     </a>
 </div>
 
-<form method="POST" id="prescriptionForm">
-    <div class="row">
+<form method="POST" id="prescriptionForm" class="animate-fade-in">
+    <div class="row g-4">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-user-md"></i> Prescription Details</h5>
+            <div class="glass-card mb-4">
+                <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                    <h5 class="mb-0 text-white"><i class="fas fa-user-md text-primary me-2"></i> Prescription Details
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="row">
+                <div class="card-body p-4">
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="dr_id" class="form-label">Doctor ID</label>
@@ -50,12 +77,13 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="doctor_license_no" class="form-label">Doctor License Number</label>
-                                <input type="text" class="form-control" id="doctor_license_no" name="doctor_license_no" required>
+                                <input type="text" class="form-control" id="doctor_license_no" name="doctor_license_no"
+                                    required>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
+
+                    <div class="row g-3">
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="date" class="form-label">Prescription Date</label>
@@ -71,37 +99,39 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="hospital_name" class="form-label">Hospital Name</label>
-                                <input type="text" class="form-control" id="hospital_name" name="hospital_name" required>
+                                <input type="text" class="form-control" id="hospital_name" name="hospital_name"
+                                    required>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="card mt-4">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-pills"></i> Prescription Items</h5>
-                    <button type="button" class="btn btn-light btn-sm" onclick="addPrescriptionItem()">
-                        <i class="fas fa-plus"></i> Add Item
+
+            <div class="glass-card">
+                <div
+                    class="card-header border-bottom border-secondary bg-transparent py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-white"><i class="fas fa-pills text-success me-2"></i> Prescription Items</h5>
+                    <button type="button" class="btn btn-sm btn-outline-light" onclick="addPrescriptionItem()">
+                        <i class="fas fa-plus me-1"></i> Add Item
                     </button>
                 </div>
-                <div class="card-body" id="prescriptionItems">
+                <div class="card-body p-4" id="prescriptionItems">
                     <div class="prescription-item" data-item="1">
                         <div class="item-header">
-                            <h6 class="mb-0">Item 1</h6>
+                            <h6 class="mb-0 text-white">Item 1</h6>
                             <span class="remove-item" onclick="removeItem(1)" style="display: none;">
                                 <i class="fas fa-trash"></i>
                             </span>
                         </div>
-                        <div class="row">
+                        <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Medicine</label>
-                                    <select class="form-control" name="product_id[]" required>
-                                        <option value="">Select Medicine</option>
+                                    <select class="form-select form-control" name="product_id[]" required>
+                                        <option value="" class="text-dark">Select Medicine</option>
                                         {% for product in products %}
-                                        <option value="{{ product.p_id }}">
-                                            {{ product.brand_name }} - {{ product.medicine_name }} 
+                                        <option value="{{ product.p_id }}" class="text-dark">
+                                            {{ product.brand_name }} - {{ product.medicine_name }}
                                             ({{ product.form }}, {{ product.strength }})
                                         </option>
                                         {% endfor %}
@@ -111,19 +141,19 @@
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label class="form-label">Dosage</label>
-                                    <input type="text" class="form-control" name="dosage[]" 
-                                           placeholder="e.g., 1 tablet 2 times" required>
+                                    <input type="text" class="form-control" name="dosage[]"
+                                        placeholder="e.g., 1 tablet 2 times" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label class="form-label">Duration</label>
-                                    <input type="text" class="form-control" name="duration[]" 
-                                           placeholder="e.g., 7 days" required>
+                                    <input type="text" class="form-control" name="duration[]" placeholder="e.g., 7 days"
+                                        required>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row g-3 mt-1">
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Quantity</label>
@@ -133,8 +163,8 @@
                             <div class="col-md-8">
                                 <div class="mb-3">
                                     <label class="form-label">Instructions</label>
-                                    <input type="text" class="form-control" name="instructions[]" 
-                                           placeholder="e.g., Take after meals">
+                                    <input type="text" class="form-control" name="instructions[]"
+                                        placeholder="e.g., Take after meals">
                                 </div>
                             </div>
                         </div>
@@ -142,15 +172,15 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Instructions</h5>
+            <div class="glass-card mb-4">
+                <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                    <h5 class="mb-0 text-white"><i class="fas fa-info-circle text-info me-2"></i> Instructions</h5>
                 </div>
-                <div class="card-body">
-                    <h6>How to fill this form:</h6>
-                    <ul class="small">
+                <div class="card-body p-4">
+                    <h6 class="text-white">How to fill this form:</h6>
+                    <ul class="small text-gray-300">
                         <li>Enter valid doctor information</li>
                         <li>Set prescription date (today or earlier)</li>
                         <li>Set validity date (future date)</li>
@@ -158,21 +188,21 @@
                         <li>Specify clear dosage and duration</li>
                         <li>Add special instructions if needed</li>
                     </ul>
-                    
-                    <hr>
-                    
-                    <h6>Dosage Examples:</h6>
-                    <ul class="small">
+
+                    <hr class="border-secondary my-4">
+
+                    <h6 class="text-white">Dosage Examples:</h6>
+                    <ul class="small text-gray-300">
                         <li>1 tablet 2 times daily</li>
                         <li>5ml 3 times daily</li>
                         <li>1 capsule once daily</li>
                     </ul>
-                    
-                    <hr>
-                    
-                    <div class="text-center">
+
+                    <hr class="border-secondary my-4">
+
+                    <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-save"></i> Save Prescription
+                            <i class="fas fa-save me-2"></i> Save Prescription
                         </button>
                     </div>
                 </div>
@@ -184,30 +214,30 @@
 
 {% block extra_js %}
 <script>
-let itemCount = 1;
+    let itemCount = 1;
 
-function addPrescriptionItem() {
-    itemCount++;
-    const itemsContainer = document.getElementById('prescriptionItems');
-    const newItem = document.createElement('div');
-    newItem.className = 'prescription-item';
-    newItem.setAttribute('data-item', itemCount);
-    
-    newItem.innerHTML = `
+    function addPrescriptionItem() {
+        itemCount++;
+        const itemsContainer = document.getElementById('prescriptionItems');
+        const newItem = document.createElement('div');
+        newItem.className = 'prescription-item';
+        newItem.setAttribute('data-item', itemCount);
+
+        newItem.innerHTML = `
         <div class="item-header">
-            <h6 class="mb-0">Item ${itemCount}</h6>
+            <h6 class="mb-0 text-white">Item ${itemCount}</h6>
             <span class="remove-item" onclick="removeItem(${itemCount})">
                 <i class="fas fa-trash"></i>
             </span>
         </div>
-        <div class="row">
+        <div class="row g-3">
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Medicine</label>
-                    <select class="form-control" name="product_id[]" required>
-                        <option value="">Select Medicine</option>
+                    <select class="form-select form-control" name="product_id[]" required>
+                        <option value="" class="text-dark">Select Medicine</option>
                         {% for product in products %}
-                        <option value="{{ product.p_id }}">
+                        <option value="{{ product.p_id }}" class="text-dark">
                             {{ product.brand_name }} - {{ product.medicine_name }} 
                             ({{ product.form }}, {{ product.strength }})
                         </option>
@@ -230,7 +260,7 @@ function addPrescriptionItem() {
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row g-3 mt-1">
             <div class="col-md-4">
                 <div class="mb-3">
                     <label class="form-label">Quantity</label>
@@ -246,40 +276,40 @@ function addPrescriptionItem() {
             </div>
         </div>
     `;
-    
-    itemsContainer.appendChild(newItem);
-    updateRemoveButtons();
-}
 
-function removeItem(itemNumber) {
-    const item = document.querySelector(`[data-item="${itemNumber}"]`);
-    if (item) {
-        item.remove();
+        itemsContainer.appendChild(newItem);
         updateRemoveButtons();
     }
-}
 
-function updateRemoveButtons() {
-    const items = document.querySelectorAll('.prescription-item');
-    items.forEach((item, index) => {
-        const removeBtn = item.querySelector('.remove-item');
-        if (items.length > 1) {
-            removeBtn.style.display = 'inline';
-        } else {
-            removeBtn.style.display = 'none';
+    function removeItem(itemNumber) {
+        const item = document.querySelector(`[data-item="${itemNumber}"]`);
+        if (item) {
+            item.remove();
+            updateRemoveButtons();
         }
-    });
-}
+    }
 
-// Set default dates
-document.addEventListener('DOMContentLoaded', function() {
-    const today = new Date().toISOString().split('T')[0];
-    const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + 30);
-    const validityDate = futureDate.toISOString().split('T')[0];
-    
-    document.getElementById('date').value = today;
-    document.getElementById('validity').value = validityDate;
-});
+    function updateRemoveButtons() {
+        const items = document.querySelectorAll('.prescription-item');
+        items.forEach((item, index) => {
+            const removeBtn = item.querySelector('.remove-item');
+            if (items.length > 1) {
+                removeBtn.style.display = 'inline';
+            } else {
+                removeBtn.style.display = 'none';
+            }
+        });
+    }
+
+    // Set default dates
+    document.addEventListener('DOMContentLoaded', function () {
+        const today = new Date().toISOString().split('T')[0];
+        const futureDate = new Date();
+        futureDate.setDate(futureDate.getDate() + 30);
+        const validityDate = futureDate.toISOString().split('T')[0];
+
+        document.getElementById('date').value = today;
+        document.getElementById('validity').value = validityDate;
+    });
 </script>
 {% endblock %}

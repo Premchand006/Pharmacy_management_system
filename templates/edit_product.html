@@ -2,82 +2,121 @@
 
 {% block title %}Edit Product - Pharmacy Management System{% endblock %}
 
+{% block extra_css %}
+<style>
+    .form-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+    }
+
+    .form-control,
+    .form-select,
+    .input-group-text {
+        background-color: rgba(17, 25, 40, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: rgba(17, 25, 40, 0.8) !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+    }
+
+    .input-group-text {
+        color: #aaa !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-primary">Edit Product</h2>
-    <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Products
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+    <h2 class="text-primary fw-bold">Edit Product</h2>
+    <a href="{{ url_for('admin.admin_products') }}" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left me-2"></i> Back to Products
     </a>
 </div>
 
-<div class="row">
+<div class="row g-4 animate-fade-in">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0"><i class="fas fa-edit"></i> Edit Product Information</h5>
+        <div class="glass-card">
+            <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                <h5 class="mb-0 text-white"><i class="fas fa-edit text-warning me-2"></i> Edit Product Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form method="POST">
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="brand_name" class="form-label">Brand Name</label>
-                                <input type="text" class="form-control" id="brand_name" name="brand_name" 
-                                       value="{{ product.brand_name }}" required>
+                                <input type="text" class="form-control" id="brand_name" name="brand_name"
+                                    value="{{ product.brand_name }}" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="medicine_name" class="form-label">Medicine Name</label>
-                                <input type="text" class="form-control" id="medicine_name" name="medicine_name" 
-                                       value="{{ product.medicine_name }}" required>
+                                <input type="text" class="form-control" id="medicine_name" name="medicine_name"
+                                    value="{{ product.medicine_name }}" required>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
+
+                    <div class="row g-3">
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="form" class="form-label">Form</label>
-                                <select class="form-control" id="form" name="form" required>
-                                    <option value="">Select Form</option>
-                                    <option value="Tablet" {{ 'selected' if product.form == 'Tablet' else '' }}>Tablet</option>
-                                    <option value="Capsule" {{ 'selected' if product.form == 'Capsule' else '' }}>Capsule</option>
-                                    <option value="Syrup" {{ 'selected' if product.form == 'Syrup' else '' }}>Syrup</option>
-                                    <option value="Injection" {{ 'selected' if product.form == 'Injection' else '' }}>Injection</option>
-                                    <option value="Cream" {{ 'selected' if product.form == 'Cream' else '' }}>Cream</option>
-                                    <option value="Ointment" {{ 'selected' if product.form == 'Ointment' else '' }}>Ointment</option>
-                                    <option value="Drops" {{ 'selected' if product.form == 'Drops' else '' }}>Drops</option>
-                                    <option value="Inhaler" {{ 'selected' if product.form == 'Inhaler' else '' }}>Inhaler</option>
+                                <select class="form-select form-control" id="form" name="form" required>
+                                    <option value="" class="text-dark">Select Form</option>
+                                    <option value="Tablet" {{ 'selected' if product.form=='Tablet' else '' }}
+                                        class="text-dark">Tablet</option>
+                                    <option value="Capsule" {{ 'selected' if product.form=='Capsule' else '' }}
+                                        class="text-dark">Capsule</option>
+                                    <option value="Syrup" {{ 'selected' if product.form=='Syrup' else '' }}
+                                        class="text-dark">Syrup</option>
+                                    <option value="Injection" {{ 'selected' if product.form=='Injection' else '' }}
+                                        class="text-dark">Injection</option>
+                                    <option value="Cream" {{ 'selected' if product.form=='Cream' else '' }}
+                                        class="text-dark">Cream</option>
+                                    <option value="Ointment" {{ 'selected' if product.form=='Ointment' else '' }}
+                                        class="text-dark">Ointment</option>
+                                    <option value="Drops" {{ 'selected' if product.form=='Drops' else '' }}
+                                        class="text-dark">Drops</option>
+                                    <option value="Inhaler" {{ 'selected' if product.form=='Inhaler' else '' }}
+                                        class="text-dark">Inhaler</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="strength" class="form-label">Strength</label>
-                                <input type="text" class="form-control" id="strength" name="strength" 
-                                       value="{{ product.strength }}" required>
+                                <input type="text" class="form-control" id="strength" name="strength"
+                                    value="{{ product.strength }}" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="packing" class="form-label">Packing</label>
-                                <input type="text" class="form-control" id="packing" name="packing" 
-                                       value="{{ product.packing }}" required>
+                                <input type="text" class="form-control" id="packing" name="packing"
+                                    value="{{ product.packing }}" required>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
+
+                    <div class="row g-3">
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="prescription_type" class="form-label">Prescription Type</label>
-                                <select class="form-control" id="prescription_type" name="prescription_type" required>
-                                    <option value="">Select Type</option>
-                                    <option value="OTC" {{ 'selected' if product.prescription_type == 'OTC' else '' }}>
+                                <select class="form-select form-control" id="prescription_type" name="prescription_type"
+                                    required>
+                                    <option value="" class="text-dark">Select Type</option>
+                                    <option value="OTC" {{ 'selected' if product.prescription_type=='OTC' else '' }}
+                                        class="text-dark">
                                         OTC (Over The Counter)
                                     </option>
-                                    <option value="Prescription" {{ 'selected' if product.prescription_type == 'Prescription' else '' }}>
+                                    <option value="Prescription" {{ 'selected' if
+                                        product.prescription_type=='Prescription' else '' }} class="text-dark">
                                         Prescription Required
                                     </option>
                                 </select>
@@ -88,8 +127,8 @@
                                 <label for="mrp" class="form-label">MRP (Maximum Retail Price)</label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="mrp" name="mrp" 
-                                           step="0.01" min="0" value="{{ product.mrp }}" required>
+                                    <input type="number" class="form-control" id="mrp" name="mrp" step="0.01" min="0"
+                                        value="{{ product.mrp }}" required>
                                 </div>
                             </div>
                         </div>
@@ -98,18 +137,18 @@
                                 <label for="unit_price" class="form-label">Unit Price</label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="unit_price" name="unit_price" 
-                                           step="0.01" min="0" value="{{ product.unit_price }}" required>
+                                    <input type="number" class="form-control" id="unit_price" name="unit_price"
+                                        step="0.01" min="0" value="{{ product.unit_price }}" required>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-warning btn-lg">
-                            <i class="fas fa-save"></i> Update Product
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-warning btn-lg px-5">
+                            <i class="fas fa-save me-2"></i> Update Product
                         </button>
-                        <a href="{{ url_for('admin_products') }}" class="btn btn-secondary btn-lg ms-2">
+                        <a href="{{ url_for('admin.admin_products') }}" class="btn btn-outline-light btn-lg ms-2">
                             Cancel
                         </a>
                     </div>
@@ -117,30 +156,30 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="fas fa-pills"></i> Product Details</h5>
+        <div class="glass-card">
+            <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                <h5 class="mb-0 text-white"><i class="fas fa-pills text-info me-2"></i> Product Details</h5>
             </div>
-            <div class="card-body">
-                <h6>Current Information</h6>
-                <ul class="list-unstyled">
-                    <li><strong>Product ID:</strong> #{{ product.p_id }}</li>
-                    <li><strong>Brand:</strong> {{ product.brand_name }}</li>
-                    <li><strong>Medicine:</strong> {{ product.medicine_name }}</li>
-                    <li><strong>Form:</strong> {{ product.form }}</li>
-                    <li><strong>Strength:</strong> {{ product.strength }}</li>
-                    <li><strong>Packing:</strong> {{ product.packing }}</li>
-                    <li><strong>Type:</strong> {{ product.prescription_type }}</li>
-                    <li><strong>MRP:</strong> ${{ "%.2f"|format(product.mrp) }}</li>
-                    <li><strong>Unit Price:</strong> ${{ "%.2f"|format(product.unit_price) }}</li>
+            <div class="card-body p-4">
+                <h6 class="text-white">Current Information</h6>
+                <ul class="list-unstyled text-gray-300">
+                    <li class="mb-2"><strong>Product ID:</strong> #{{ product.p_id }}</li>
+                    <li class="mb-2"><strong>Brand:</strong> {{ product.brand_name }}</li>
+                    <li class="mb-2"><strong>Medicine:</strong> {{ product.medicine_name }}</li>
+                    <li class="mb-2"><strong>Form:</strong> {{ product.form }}</li>
+                    <li class="mb-2"><strong>Strength:</strong> {{ product.strength }}</li>
+                    <li class="mb-2"><strong>Packing:</strong> {{ product.packing }}</li>
+                    <li class="mb-2"><strong>Type:</strong> {{ product.prescription_type }}</li>
+                    <li class="mb-2"><strong>MRP:</strong> ${{ "%.2f"|format(product.mrp) }}</li>
+                    <li class="mb-2"><strong>Unit Price:</strong> ${{ "%.2f"|format(product.unit_price) }}</li>
                 </ul>
-                
-                <hr>
-                
-                <h6>Update Guidelines</h6>
-                <ul class="small">
+
+                <hr class="border-secondary my-4">
+
+                <h6 class="text-white">Update Guidelines</h6>
+                <ul class="small text-gray-300">
                     <li>Verify all changes before saving</li>
                     <li>Price changes affect existing stock</li>
                     <li>Form/strength changes need verification</li>

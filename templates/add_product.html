@@ -2,80 +2,109 @@
 
 {% block title %}Add Product - Pharmacy Management System{% endblock %}
 
+{% block extra_css %}
+<style>
+    .form-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+    }
+
+    .form-control,
+    .form-select,
+    .input-group-text {
+        background-color: rgba(17, 25, 40, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: rgba(17, 25, 40, 0.8) !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+    }
+
+    .input-group-text {
+        color: #aaa !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-primary">Add New Product</h2>
-    <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Products
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+    <h2 class="text-primary fw-bold">Add New Product</h2>
+    <a href="{{ url_for('admin.admin_products') }}" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left me-2"></i> Back to Products
     </a>
 </div>
 
-<div class="row">
+<div class="row g-4 animate-fade-in">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-pills"></i> Product Information</h5>
+        <div class="glass-card">
+            <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                <h5 class="mb-0 text-white"><i class="fas fa-pills text-primary me-2"></i> Product Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form method="POST">
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="brand_name" class="form-label">Brand Name</label>
-                                <input type="text" class="form-control" id="brand_name" name="brand_name" 
-                                       placeholder="e.g., Tylenol" required>
+                                <input type="text" class="form-control" id="brand_name" name="brand_name"
+                                    placeholder="e.g., Tylenol" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="medicine_name" class="form-label">Medicine Name</label>
-                                <input type="text" class="form-control" id="medicine_name" name="medicine_name" 
-                                       placeholder="e.g., Paracetamol" required>
+                                <input type="text" class="form-control" id="medicine_name" name="medicine_name"
+                                    placeholder="e.g., Paracetamol" required>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
+
+                    <div class="row g-3">
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="form" class="form-label">Form</label>
-                                <select class="form-control" id="form" name="form" required>
-                                    <option value="">Select Form</option>
-                                    <option value="Tablet">Tablet</option>
-                                    <option value="Capsule">Capsule</option>
-                                    <option value="Syrup">Syrup</option>
-                                    <option value="Injection">Injection</option>
-                                    <option value="Cream">Cream</option>
-                                    <option value="Ointment">Ointment</option>
-                                    <option value="Drops">Drops</option>
-                                    <option value="Inhaler">Inhaler</option>
+                                <select class="form-select form-control" id="form" name="form" required>
+                                    <option value="" class="text-dark">Select Form</option>
+                                    <option value="Tablet" class="text-dark">Tablet</option>
+                                    <option value="Capsule" class="text-dark">Capsule</option>
+                                    <option value="Syrup" class="text-dark">Syrup</option>
+                                    <option value="Injection" class="text-dark">Injection</option>
+                                    <option value="Cream" class="text-dark">Cream</option>
+                                    <option value="Ointment" class="text-dark">Ointment</option>
+                                    <option value="Drops" class="text-dark">Drops</option>
+                                    <option value="Inhaler" class="text-dark">Inhaler</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="strength" class="form-label">Strength</label>
-                                <input type="text" class="form-control" id="strength" name="strength" 
-                                       placeholder="e.g., 500mg" required>
+                                <input type="text" class="form-control" id="strength" name="strength"
+                                    placeholder="e.g., 500mg" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="packing" class="form-label">Packing</label>
-                                <input type="text" class="form-control" id="packing" name="packing" 
-                                       placeholder="e.g., Strip of 10" required>
+                                <input type="text" class="form-control" id="packing" name="packing"
+                                    placeholder="e.g., Strip of 10" required>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
+
+                    <div class="row g-3">
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="prescription_type" class="form-label">Prescription Type</label>
-                                <select class="form-control" id="prescription_type" name="prescription_type" required>
-                                    <option value="">Select Type</option>
-                                    <option value="OTC">OTC (Over The Counter)</option>
-                                    <option value="Prescription">Prescription Required</option>
+                                <select class="form-select form-control" id="prescription_type" name="prescription_type"
+                                    required>
+                                    <option value="" class="text-dark">Select Type</option>
+                                    <option value="OTC" class="text-dark">OTC (Over The Counter)</option>
+                                    <option value="Prescription" class="text-dark">Prescription Required</option>
                                 </select>
                             </div>
                         </div>
@@ -84,8 +113,8 @@
                                 <label for="mrp" class="form-label">MRP (Maximum Retail Price)</label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="mrp" name="mrp" 
-                                           step="0.01" min="0" required>
+                                    <input type="number" class="form-control" id="mrp" name="mrp" step="0.01" min="0"
+                                        required>
                                 </div>
                             </div>
                         </div>
@@ -94,18 +123,18 @@
                                 <label for="unit_price" class="form-label">Unit Price</label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="unit_price" name="unit_price" 
-                                           step="0.01" min="0" required>
+                                    <input type="number" class="form-control" id="unit_price" name="unit_price"
+                                        step="0.01" min="0" required>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            <i class="fas fa-save"></i> Add Product
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success btn-lg px-5">
+                            <i class="fas fa-save me-2"></i> Add Product
                         </button>
-                        <a href="{{ url_for('admin_products') }}" class="btn btn-secondary btn-lg ms-2">
+                        <a href="{{ url_for('admin.admin_products') }}" class="btn btn-outline-light btn-lg ms-2">
                             Cancel
                         </a>
                     </div>
@@ -113,36 +142,36 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Guidelines</h5>
+        <div class="glass-card">
+            <div class="card-header border-bottom border-secondary bg-transparent py-3">
+                <h5 class="mb-0 text-white"><i class="fas fa-info-circle text-info me-2"></i> Guidelines</h5>
             </div>
-            <div class="card-body">
-                <h6>Product Registration</h6>
-                <ul class="small">
+            <div class="card-body p-4">
+                <h6 class="text-white">Product Registration</h6>
+                <ul class="small text-gray-300">
                     <li>Enter accurate brand and generic names</li>
                     <li>Select appropriate form and strength</li>
                     <li>Specify complete packing details</li>
                     <li>Set correct prescription requirements</li>
                     <li>Unit price should be less than MRP</li>
                 </ul>
-                
-                <hr>
-                
-                <h6>Form Examples</h6>
-                <ul class="small">
+
+                <hr class="border-secondary my-4">
+
+                <h6 class="text-white">Form Examples</h6>
+                <ul class="small text-gray-300">
                     <li><strong>Tablet:</strong> Solid oral dosage</li>
                     <li><strong>Syrup:</strong> Liquid oral medicine</li>
                     <li><strong>Injection:</strong> Injectable solution</li>
                     <li><strong>Cream:</strong> Topical application</li>
                 </ul>
-                
-                <hr>
-                
-                <h6>Prescription Types</h6>
-                <ul class="small">
+
+                <hr class="border-secondary my-4">
+
+                <h6 class="text-white">Prescription Types</h6>
+                <ul class="small text-gray-300">
                     <li><strong>OTC:</strong> Can be sold without prescription</li>
                     <li><strong>Prescription:</strong> Requires valid doctor's prescription</li>
                 </ul>

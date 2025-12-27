@@ -3,25 +3,25 @@
 {% block title %}Reports - Pharmacy Management System{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-primary">Business Reports</h2>
-    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Dashboard
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+    <h2 class="text-primary fw-bold">Business Reports</h2>
+    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
     </a>
 </div>
 
 <!-- Current Stock Summary -->
-<div class="card mb-4">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0"><i class="fas fa-boxes"></i> Current Stock Summary</h5>
+<div class="glass-card mb-4 animate-fade-in">
+    <div class="card-header border-bottom border-secondary bg-transparent py-3">
+        <h5 class="mb-0 text-white"><i class="fas fa-boxes text-primary me-2"></i> Current Stock Summary</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
         {% if stock_data %}
         <div class="table-responsive">
-            <table class="table table-hover table-sm">
-                <thead>
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-transparent border-bottom border-secondary">
                     <tr>
-                        <th>Brand Name</th>
+                        <th class="ps-4">Brand Name</th>
                         <th>Medicine Name</th>
                         <th>Total Stock Available</th>
                         <th>Nearest Expiry Date</th>
@@ -30,22 +30,25 @@
                 <tbody>
                     {% for stock in stock_data %}
                     <tr>
-                        <td><strong>{{ stock.brand_name }}</strong></td>
-                        <td>{{ stock.medicine_name }}</td>
+                        <td class="ps-4 text-white"><strong>{{ stock.brand_name }}</strong></td>
+                        <td class="text-gray-300">{{ stock.medicine_name }}</td>
                         <td>
-                            {% if stock.total_stock < 10 %}
-                                <span class="badge bg-danger">{{ stock.total_stock }} units (Low Stock)</span>
-                            {% elif stock.total_stock < 50 %}
-                                <span class="badge bg-warning">{{ stock.total_stock }} units</span>
-                            {% else %}
-                                <span class="badge bg-success">{{ stock.total_stock }} units</span>
-                            {% endif %}
+                            {% if stock.total_stock < 10 %} <span
+                                class="badge bg-danger bg-opacity-20 text-danger border border-danger">{{
+                                stock.total_stock }} units (Low Stock)</span>
+                                {% elif stock.total_stock < 50 %} <span
+                                    class="badge bg-warning bg-opacity-20 text-warning border border-warning">{{
+                                    stock.total_stock }} units</span>
+                                    {% else %}
+                                    <span class="badge bg-success bg-opacity-20 text-success border border-success">{{
+                                        stock.total_stock }} units</span>
+                                    {% endif %}
                         </td>
-                        <td>
+                        <td class="text-gray-300">
                             {% if stock.nearest_expiry %}
-                                {{ stock.nearest_expiry.strftime('%Y-%m-%d') }}
+                            {{ stock.nearest_expiry.strftime('%Y-%m-%d') }}
                             {% else %}
-                                N/A
+                            N/A
                             {% endif %}
                         </td>
                     </tr>
@@ -54,23 +57,24 @@
             </table>
         </div>
         {% else %}
-        <p class="text-center text-muted">No stock data available</p>
+        <p class="text-center text-muted py-4 mb-0">No stock data available</p>
         {% endif %}
     </div>
 </div>
 
 <!-- Near Expiry Items -->
-<div class="card mb-4">
-    <div class="card-header bg-warning text-dark">
-        <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Near Expiry Items (Within 30 Days)</h5>
+<div class="glass-card mb-4 animate-fade-in">
+    <div class="card-header border-bottom border-secondary bg-transparent py-3">
+        <h5 class="mb-0 text-white"><i class="fas fa-exclamation-triangle text-warning me-2"></i> Near Expiry Items
+            (Within 30 Days)</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
         {% if near_expiry %}
         <div class="table-responsive">
-            <table class="table table-hover table-sm">
-                <thead>
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-transparent border-bottom border-secondary">
                     <tr>
-                        <th>Brand Name</th>
+                        <th class="ps-4">Brand Name</th>
                         <th>Medicine Name</th>
                         <th>Batch Number</th>
                         <th>Expiry Date</th>
@@ -81,28 +85,34 @@
                 <tbody>
                     {% for item in near_expiry %}
                     <tr>
-                        <td><strong>{{ item.brand_name }}</strong></td>
-                        <td>{{ item.medicine_name }}</td>
-                        <td><span class="badge bg-secondary">{{ item.batch_no }}</span></td>
+                        <td class="ps-4 text-white"><strong>{{ item.brand_name }}</strong></td>
+                        <td class="text-gray-300">{{ item.medicine_name }}</td>
+                        <td><span class="badge bg-secondary bg-opacity-20 text-light border border-secondary">{{
+                                item.batch_no }}</span></td>
                         <td>
                             {% set days_to_expiry = (item.expiry_date - date.today()).days %}
-                            {% if days_to_expiry <= 7 %}
-                                <span class="badge bg-danger">{{ item.expiry_date.strftime('%Y-%m-%d') }}</span>
-                            {% elif days_to_expiry <= 15 %}
-                                <span class="badge bg-warning">{{ item.expiry_date.strftime('%Y-%m-%d') }}</span>
-                            {% else %}
-                                <span class="badge bg-info">{{ item.expiry_date.strftime('%Y-%m-%d') }}</span>
-                            {% endif %}
+                            {% if days_to_expiry <= 7 %} <span
+                                class="badge bg-danger bg-opacity-20 text-danger border border-danger">{{
+                                item.expiry_date.strftime('%Y-%m-%d') }}</span>
+                                {% elif days_to_expiry <= 15 %} <span
+                                    class="badge bg-warning bg-opacity-20 text-warning border border-warning">{{
+                                    item.expiry_date.strftime('%Y-%m-%d') }}</span>
+                                    {% else %}
+                                    <span class="badge bg-info bg-opacity-20 text-info border border-info">{{
+                                        item.expiry_date.strftime('%Y-%m-%d') }}</span>
+                                    {% endif %}
                         </td>
-                        <td>{{ item.qty_available }} units</td>
+                        <td class="text-gray-300">{{ item.qty_available }} units</td>
                         <td>
-                            {% if days_to_expiry <= 7 %}
-                                <span class="badge bg-danger">Critical</span>
-                            {% elif days_to_expiry <= 15 %}
-                                <span class="badge bg-warning">Warning</span>
-                            {% else %}
-                                <span class="badge bg-info">Monitor</span>
-                            {% endif %}
+                            {% if days_to_expiry <= 7 %} <span
+                                class="badge bg-danger bg-opacity-20 text-danger border border-danger">Critical</span>
+                                {% elif days_to_expiry <= 15 %} <span
+                                    class="badge bg-warning bg-opacity-20 text-warning border border-warning">
+                                    Warning</span>
+                                    {% else %}
+                                    <span
+                                        class="badge bg-info bg-opacity-20 text-info border border-info">Monitor</span>
+                                    {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
@@ -110,60 +120,65 @@
             </table>
         </div>
         {% else %}
-        <div class="alert alert-success mb-0">
-            <i class="fas fa-check-circle"></i> No items expiring within the next 30 days.
+        <div class="p-4">
+            <div
+                class="alert alert-success d-flex align-items-center mb-0 bg-success bg-opacity-20 text-success border-success">
+                <i class="fas fa-check-circle me-2"></i>
+                <div>No items expiring within the next 30 days.</div>
+            </div>
         </div>
         {% endif %}
     </div>
 </div>
 
 <!-- Top Selling Medicines -->
-<div class="card">
-    <div class="card-header bg-success text-white">
-        <h5 class="mb-0"><i class="fas fa-star"></i> Top Selling Medicines (Top 10)</h5>
+<div class="glass-card mb-4 animate-fade-in">
+    <div class="card-header border-bottom border-secondary bg-transparent py-3">
+        <h5 class="mb-0 text-white"><i class="fas fa-star text-warning me-2"></i> Top Selling Medicines (Top 10)</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
         {% if top_selling %}
         <div class="table-responsive">
-            <table class="table table-hover table-sm">
-                <thead>
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-transparent border-bottom border-secondary">
                     <tr>
-                        <th>#</th>
+                        <th class="ps-4">#</th>
                         <th>Brand Name</th>
                         <th>Medicine Name</th>
                         <th>Total Units Sold</th>
-                        <th>Performance</th>
+                        <th class="pe-4">Performance</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in top_selling %}
                     <tr>
-                        <td>
+                        <td class="ps-4">
                             {% if loop.index == 1 %}
-                                <span class="badge bg-warning">🥇 {{ loop.index }}</span>
+                            <span class="badge bg-warning text-dark">🥇 {{ loop.index }}</span>
                             {% elif loop.index == 2 %}
-                                <span class="badge bg-secondary">🥈 {{ loop.index }}</span>
+                            <span class="badge bg-secondary text-dark">🥈 {{ loop.index }}</span>
                             {% elif loop.index == 3 %}
-                                <span class="badge bg-warning" style="background-color: #CD7F32 !important;">🥉 {{ loop.index }}</span>
+                            <span class="badge bg-warning text-dark" style="background-color: #CD7F32 !important;">🥉 {{
+                                loop.index }}</span>
                             {% else %}
-                                <span class="badge bg-primary">{{ loop.index }}</span>
+                            <span class="badge bg-primary bg-opacity-20 text-primary border border-primary">{{
+                                loop.index }}</span>
                             {% endif %}
                         </td>
-                        <td><strong>{{ item.brand_name }}</strong></td>
-                        <td>{{ item.medicine_name }}</td>
-                        <td><span class="badge bg-success">{{ item.total_sold }} units</span></td>
-                        <td>
-                            <div class="progress" style="height: 20px;">
+                        <td class="text-white"><strong>{{ item.brand_name }}</strong></td>
+                        <td class="text-gray-300">{{ item.medicine_name }}</td>
+                        <td><span class="badge bg-success bg-opacity-20 text-success border border-success">{{
+                                item.total_sold }} units</span></td>
+                        <td class="pe-4" style="min-width: 200px;">
+                            <div class="progress bg-secondary bg-opacity-25" style="height: 10px; border-radius: 5px;">
                                 {% set max_sold = top_selling[0].total_sold %}
                                 {% set percentage = (item.total_sold / max_sold * 100)|round|int %}
-                                <div class="progress-bar bg-success" role="progressbar" 
-                                     style="width: {{ percentage }}%;" 
-                                     aria-valuenow="{{ percentage }}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="100">
-                                    {{ percentage }}%
+                                <div class="progress-bar bg-success" role="progressbar"
+                                    style="width: {{ percentage }}%; border-radius: 5px;"
+                                    aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100">
                                 </div>
                             </div>
+                            <small class="text-muted d-block mt-1">{{ percentage }}% of top seller</small>
                         </td>
                     </tr>
                     {% endfor %}
@@ -171,51 +186,68 @@
             </table>
         </div>
         {% else %}
-        <p class="text-center text-muted">No sales data available</p>
+        <p class="text-center text-muted py-4 mb-0">No sales data available</p>
         {% endif %}
     </div>
 </div>
 
 <!-- Batch to Sale Traceability -->
-<div class="card mt-4">
-    <div class="card-header bg-info text-white">
-        <h5 class="mb-0"><i class="fas fa-link"></i> Batch → Sale → Prescription Traceability</h5>
+<div class="glass-card mt-4 animate-fade-in">
+    <div class="card-header border-bottom border-secondary bg-transparent py-3">
+        <h5 class="mb-0 text-white"><i class="fas fa-link text-info me-2"></i> Batch → Sale → Prescription Traceability
+        </h5>
     </div>
-    <div class="card-body">
-        <p class="mb-3">The system maintains complete traceability from batch receipt through sales to prescriptions:</p>
-        <div class="row">
+    <div class="card-body p-4">
+        <p class="text-gray-300 mb-4">The system maintains complete traceability from batch receipt through sales to
+            prescriptions:</p>
+        <div class="row g-4">
             <div class="col-md-4">
-                <div class="card bg-light">
-                    <div class="card-body text-center">
-                        <i class="fas fa-box fa-2x text-primary mb-2"></i>
-                        <h6>Batch Level</h6>
-                        <p class="small mb-0">Tracks batch number, expiry dates, and quantities from suppliers</p>
+                <div class="glass-card bg-primary bg-opacity-10 border border-primary border-opacity-25 h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-circle bg-primary bg-opacity-20 text-primary mx-auto mb-3"
+                            style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-box fa-2x"></i>
+                        </div>
+                        <h6 class="text-white">Batch Level</h6>
+                        <p class="small text-muted mb-0">Tracks batch number, expiry dates, and quantities from
+                            suppliers</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card bg-light">
-                    <div class="card-body text-center">
-                        <i class="fas fa-shopping-cart fa-2x text-success mb-2"></i>
-                        <h6>Sale Level</h6>
-                        <p class="small mb-0">Links specific batches to customer sales with full transaction details</p>
+                <div class="glass-card bg-success bg-opacity-10 border border-success border-opacity-25 h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-circle bg-success bg-opacity-20 text-success mx-auto mb-3"
+                            style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-shopping-cart fa-2x"></i>
+                        </div>
+                        <h6 class="text-white">Sale Level</h6>
+                        <p class="small text-muted mb-0">Links specific batches to customer sales with full transaction
+                            details</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card bg-light">
-                    <div class="card-body text-center">
-                        <i class="fas fa-prescription fa-2x text-warning mb-2"></i>
-                        <h6>Prescription Level</h6>
-                        <p class="small mb-0">Connects sales to doctor prescriptions for regulatory compliance</p>
+                <div class="glass-card bg-warning bg-opacity-10 border border-warning border-opacity-25 h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-circle bg-warning bg-opacity-20 text-warning mx-auto mb-3"
+                            style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-prescription fa-2x"></i>
+                        </div>
+                        <h6 class="text-white">Prescription Level</h6>
+                        <p class="small text-muted mb-0">Connects sales to doctor prescriptions for regulatory
+                            compliance</p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="alert alert-info mt-3 mb-0">
-            <i class="fas fa-info-circle"></i>
-            <strong>Regulatory Compliance:</strong> This traceability ensures full compliance with pharmaceutical regulations 
-            and enables quick recall procedures if needed.
+        <div class="alert alert-info d-flex align-items-center mt-4 mb-0 bg-info bg-opacity-20 text-info border-info">
+            <i class="fas fa-info-circle me-3 fa-lg"></i>
+            <div>
+                <strong>Regulatory Compliance:</strong> This traceability ensures full compliance with pharmaceutical
+                regulations
+                and enables quick recall procedures if needed.
+            </div>
         </div>
     </div>
 </div>

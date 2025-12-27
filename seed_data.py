@@ -14,7 +14,11 @@ def seed_database():
     """Populate database with sample data"""
 
     # Import here to avoid circular imports
-    from app import app, db, Customer, Employee, Supplier, Product, Batch, Purchase, Sale, SaleItem, Prescription, PrescriptionItem
+    # Import from appropriate locations
+    from extensions import db
+    from app import app
+    from models import Customer, Employee, Supplier, Product, Batch, Purchase, Sale, SaleItem, Prescription, PrescriptionItem
+    from werkzeug.security import generate_password_hash
 
     with app.app_context():
         # Clear existing data
@@ -43,28 +47,38 @@ def seed_database():
         ]
 
         customers = []
+        default_password = generate_password_hash("password123")
         for data in customers_data:
-            customer = Customer(**data)
+            customer = Customer(password_hash=default_password, **data)
             db.session.add(customer)
             customers.append(customer)
         db.session.commit()
         print(f"Added {len(customers)} customers")
 
         print("Seeding Employees...")
+        # Create a dedicated Admin account
+        admin_data = {
+            "name": "System Administrator", "username": "admin", 
+            "password_hash": generate_password_hash("admin123"), 
+            "salary": 100000.00, "work_shift": "General", "role": "Administrator", "experience": 15
+        }
+        admin = Employee(**admin_data)
+        db.session.add(admin)
+        
         employees_data = [
-            {"name": "Dr. Alice Cooper", "salary": 75000.00,
+            {"name": "Dr. Alice Cooper", "username": "alice", "password_hash": default_password, "salary": 75000.00,
                 "work_shift": "Morning", "role": "Pharmacist", "experience": 10},
-            {"name": "Bob Williams", "salary": 45000.00, "work_shift": "Evening",
+            {"name": "Bob Williams", "username": "bob", "password_hash": default_password, "salary": 45000.00, "work_shift": "Evening",
                 "role": "Assistant Pharmacist", "experience": 5},
-            {"name": "Carol Martinez", "salary": 55000.00,
+            {"name": "Carol Martinez", "username": "carol", "password_hash": default_password, "salary": 55000.00,
                 "work_shift": "Full Day", "role": "Store Manager", "experience": 8},
-            {"name": "Daniel Lee", "salary": 35000.00, "work_shift": "Morning",
+            {"name": "Daniel Lee", "username": "daniel", "password_hash": default_password, "salary": 35000.00, "work_shift": "Morning",
                 "role": "Sales Associate", "experience": 3},
-            {"name": "Eva Rodriguez", "salary": 38000.00, "work_shift": "Evening",
+            {"name": "Eva Rodriguez", "username": "eva", "password_hash": default_password, "salary": 38000.00, "work_shift": "Evening",
                 "role": "Inventory Clerk", "experience": 4},
         ]
 
-        employees = []
+        employees = [admin]
         for data in employees_data:
             employee = Employee(**data)
             db.session.add(employee)

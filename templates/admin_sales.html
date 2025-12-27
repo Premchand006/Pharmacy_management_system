@@ -3,63 +3,66 @@
 {% block title %}Sales by Products - Pharmacy Management System{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-primary">Sales by Products</h2>
-    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Dashboard
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+    <h2 class="text-primary fw-bold">Sales by Products</h2>
+    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
     </a>
 </div>
 
-<div class="card mb-4">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0"><i class="fas fa-info-circle"></i> Sales Overview</h5>
+<div class="glass-card mb-4 animate-fade-in">
+    <div class="card-header border-bottom border-secondary bg-transparent py-3">
+        <h5 class="mb-0 text-white"><i class="fas fa-info-circle text-info me-2"></i> Sales Overview</h5>
     </div>
-    <div class="card-body">
-        <p class="mb-0">This report shows total sales aggregated by products and their associated suppliers.</p>
+    <div class="card-body p-4">
+        <p class="mb-0 text-gray-300">This report shows total sales aggregated by products and their associated
+            suppliers.</p>
     </div>
 </div>
 
 {% if sales_data %}
-<div class="card">
-    <div class="card-body">
+<div class="glass-card animate-fade-in">
+    <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-transparent border-bottom border-secondary">
                     <tr>
-                        <th>Brand Name</th>
+                        <th class="ps-4">Brand Name</th>
                         <th>Medicine Name</th>
                         <th>Supplier</th>
                         <th>Total Quantity Sold</th>
-                        <th>Total Sales Amount</th>
+                        <th class="text-end pe-4">Total Sales Amount</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for sale in sales_data %}
                     <tr>
-                        <td><strong>{{ sale.brand_name }}</strong></td>
-                        <td>{{ sale.medicine_name }}</td>
+                        <td class="ps-4 text-white"><strong>{{ sale.brand_name }}</strong></td>
+                        <td class="text-gray-300">{{ sale.medicine_name }}</td>
                         <td>
-                            <span class="badge bg-info">{{ sale.firm_name }}</span>
+                            <span class="badge bg-info bg-opacity-20 text-info border border-info">{{ sale.firm_name
+                                }}</span>
                         </td>
                         <td>
-                            <span class="badge bg-success">{{ sale.total_qty }} units</span>
+                            <span class="badge bg-success bg-opacity-20 text-success border border-success">{{
+                                sale.total_qty }} units</span>
                         </td>
-                        <td>
+                        <td class="text-end pe-4">
                             <strong class="text-success">${{ "%.2f"|format(sale.total_sales) }}</strong>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
-                <tfoot>
-                    <tr class="table-active">
-                        <td colspan="3" class="text-end"><strong>Grand Total:</strong></td>
+                <tfoot class="border-top border-secondary">
+                    <tr class="bg-white bg-opacity-5">
+                        <td colspan="3" class="text-end text-white pe-3"><strong>Grand Total:</strong></td>
                         <td>
-                            <strong class="badge bg-primary">
+                            <span class="badge bg-primary bg-opacity-80 text-white border border-primary">
                                 {{ sales_data|sum(attribute='total_qty') }} units
-                            </strong>
+                            </span>
                         </td>
-                        <td>
-                            <strong class="text-primary">
+                        <td class="text-end pe-4">
+                            <strong class="text-primary h5 mb-0">
                                 ${{ "%.2f"|format(sales_data|sum(attribute='total_sales')) }}
                             </strong>
                         </td>
@@ -70,13 +73,16 @@
     </div>
 </div>
 {% else %}
-<div class="text-center py-5">
-    <div class="card">
-        <div class="card-body">
-            <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">No Sales Data Found</h4>
-            <p class="text-muted">There are no sales records in the system yet.</p>
+<div class="text-center py-5 animate-fade-in">
+    <div class="glass-card p-5 d-inline-block">
+        <div class="mb-4">
+            <div class="icon-circle bg-warning bg-opacity-20 text-warning mx-auto mb-3"
+                style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-shopping-cart fa-3x"></i>
+            </div>
         </div>
+        <h4 class="text-gray-300 mb-3">No Sales Data Found</h4>
+        <p class="text-muted mb-4">There are no sales records in the system yet.</p>
     </div>
 </div>
 {% endif %}
