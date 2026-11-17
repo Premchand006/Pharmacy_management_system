@@ -9,7 +9,7 @@
 </div>
 
 {% if stats.near_expiry %}
-<div class="alert alert-warning glass-card border-0 d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4" role="status">
+<div class="alert alert-warning alert-permanent glass-card border-0 d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4" role="status">
     <span><i class="fas fa-hourglass-half me-2"></i>{{ stats.near_expiry }} batch{{ 'es' if stats.near_expiry != 1 }} in stock expire within 30 days.</span>
     <a href="{{ url_for('admin.admin_reports') }}#near-expiry" class="btn btn-sm btn-warning">Review</a>
 </div>
