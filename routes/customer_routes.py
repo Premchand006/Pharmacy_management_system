@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, current_app, render_template, request, redirect, url_for, session, flash
 from extensions import db
 from models import Prescription, PrescriptionItem, Product
 from datetime import datetime
@@ -8,7 +8,7 @@ customer_routes = Blueprint('customer', __name__)
 @customer_routes.before_request
 def require_customer():
     if session.get('user_type') != 'customer':
-        return redirect(url_for('index')) # Or auth.customer_login
+        return redirect(url_for('auth.customer_login'))
 
 @customer_routes.route('/customer_dashboard')
 def customer_dashboard():
@@ -22,8 +22,9 @@ def customer_prescriptions():
 
 @customer_routes.route('/prescription_items/<int:prescription_id>')
 def prescription_items(prescription_id):
-    items = PrescriptionItem.query.filter_by(pres_id=prescription_id).all()
-    prescription = Prescription.query.get(prescription_id)
+    prescription = Prescription.query.filter_by(
+        pres_id=prescription_id, c_id=session.get('user_id')).first_or_404()
+    items = PrescriptionItem.query.filter_by(pres_id=prescription.pres_id).all()
     return render_template('prescription_items.html', items=items, prescription=prescription)
 
 @customer_routes.route('/add_prescription', methods=['GET', 'POST'])
@@ -69,9 +70,10 @@ def add_prescription():
             flash('Prescription added successfully!', 'success')
             return redirect(url_for('customer.customer_prescriptions'))
 
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            flash(f'Error adding prescription: {str(e)}', 'error')
+            current_app.logger.exception('Failed adding prescription')
+            flash('Could not add prescription. Check the values and try again.', 'error')
 
     products = Product.query.all()
     return render_template('add_prescription.html', products=products)

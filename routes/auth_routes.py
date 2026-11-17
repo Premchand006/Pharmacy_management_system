@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import check_password_hash
+from extensions import db
 from models import Customer, Employee
 
 auth_routes = Blueprint('auth', __name__)
@@ -10,26 +11,20 @@ def customer_login():
         customer_id = request.form['customer_id']
         password = request.form.get('password')
         
-        customer = Customer.query.filter_by(c_id=customer_id).first()
-        
-        if customer:
-            # Check password if provided, or if hash exists
-            offset_auth = True
-            if customer.password_hash:
-                if not password or not check_password_hash(customer.password_hash, password):
-                    offset_auth = False
-            
-            if offset_auth:
-                session['user_type'] = 'customer'
-                session['user_id'] = customer.c_id
-                session['user_name'] = customer.name
-                return redirect(url_for('customer.customer_dashboard'))
-            else:
-                flash('Invalid Password', 'error')
-                return render_template('customer_login.html', error=True)
-        else:
-            flash('Invalid Customer ID', 'error')
-            return render_template('customer_login.html', error=True)
+        customer = None
+        if customer_id.strip().isdigit():
+            customer = db.session.get(Customer, int(customer_id))
+
+        if (customer and customer.password_hash and password
+                and check_password_hash(customer.password_hash, password)):
+            session.clear()
+            session['user_type'] = 'customer'
+            session['user_id'] = customer.c_id
+            session['user_name'] = customer.name
+            return redirect(url_for('customer.customer_dashboard'))
+
+        flash('Customer ID or password is incorrect.', 'error')
+        return render_template('customer_login.html', error=True), 401
 
     return render_template('customer_login.html')
 
@@ -42,12 +37,14 @@ def admin_login():
         user = Employee.query.filter_by(username=username).first()
         
         if user and user.password_hash and check_password_hash(user.password_hash, password):
+            session.clear()
             session['user_type'] = 'admin'
+            session['user_id'] = user.e_id
             session['user_name'] = user.name
             return redirect(url_for('admin.admin_dashboard'))
-        else:
-            flash('Invalid credentials', 'error')
-            return render_template('admin_login.html', error=True)
+
+        flash('Username or password is incorrect.', 'error')
+        return render_template('admin_login.html', error=True), 401
 
     return render_template('admin_login.html')
 

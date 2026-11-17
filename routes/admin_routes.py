@@ -1,22 +1,30 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, current_app, render_template, request, redirect, url_for, session, flash
 from extensions import db
 from models import Customer, Employee, Product, Sale, Supplier, Batch, SaleItem
 from datetime import datetime, timedelta
+
+from werkzeug.security import generate_password_hash
 
 admin_routes = Blueprint('admin', __name__)
 
 @admin_routes.before_request
 def require_admin():
     if session.get('user_type') != 'admin':
-        return redirect(url_for('auth.admin_login')) # Redirect to login if not admin
+        return redirect(url_for('auth.admin_login'))
 
 @admin_routes.route('/admin_dashboard')
 def admin_dashboard():
-    return render_template('admin_dashboard.html',
-                           Product=Product,
-                           Customer=Customer,
-                           Employee=Employee,
-                           Sale=Sale)
+    today = datetime.now().date()
+    stats = {
+        'products': Product.query.count(),
+        'customers': Customer.query.count(),
+        'employees': Employee.query.count(),
+        'sales': Sale.query.count(),
+        'near_expiry': Batch.query.filter(
+            Batch.qty_available > 0,
+            Batch.expiry_date <= today + timedelta(days=30)).count(),
+    }
+    return render_template('admin_dashboard.html', stats=stats)
 
 # Employee Management
 @admin_routes.route('/admin/employees')
@@ -28,8 +36,14 @@ def admin_employees():
 def add_employee():
     if request.method == 'POST':
         try:
-            # TODO: Add username/password handling in form
+            username = request.form.get('username', '').strip() or None
+            password = request.form.get('password', '')
+            if username and Employee.query.filter_by(username=username).first():
+                flash('That username is already taken.', 'error')
+                return render_template('add_employee.html')
             employee = Employee(
+                username=username,
+                password_hash=generate_password_hash(password) if password else None,
                 name=request.form['name'],
                 salary=float(request.form['salary']),
                 work_shift=request.form['work_shift'],
@@ -40,9 +54,10 @@ def add_employee():
             db.session.commit()
             flash('Employee added successfully!', 'success')
             return redirect(url_for('admin.admin_employees'))
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            flash(f'Error adding employee: {str(e)}', 'error')
+            current_app.logger.exception('Failed adding employee')
+            flash('Could not add employee. Check the values and try again.', 'error')
 
     return render_template('add_employee.html')
 
@@ -61,9 +76,10 @@ def edit_employee(employee_id):
             db.session.commit()
             flash('Employee updated successfully!', 'success')
             return redirect(url_for('admin.admin_employees'))
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            flash(f'Error updating employee: {str(e)}', 'error')
+            current_app.logger.exception('Failed updating employee')
+            flash('Could not update employee. Check the values and try again.', 'error')
 
     return render_template('edit_employee.html', employee=employee)
 
@@ -74,9 +90,10 @@ def delete_employee(employee_id):
         db.session.delete(employee)
         db.session.commit()
         flash('Employee deleted successfully!', 'success')
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        flash(f'Error deleting employee: {str(e)}', 'error')
+        current_app.logger.exception('Failed deleting employee')
+        flash('Could not delete employee. It may still be linked to other records.', 'error')
 
     return redirect(url_for('admin.admin_employees'))
 
@@ -104,9 +121,10 @@ def add_product():
             db.session.commit()
             flash('Product added successfully!', 'success')
             return redirect(url_for('admin.admin_products'))
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            flash(f'Error adding product: {str(e)}', 'error')
+            current_app.logger.exception('Failed adding product')
+            flash('Could not add product. Check the values and try again.', 'error')
 
     return render_template('add_product.html')
 
@@ -128,9 +146,10 @@ def edit_product(product_id):
             db.session.commit()
             flash('Product updated successfully!', 'success')
             return redirect(url_for('admin.admin_products'))
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            flash(f'Error updating product: {str(e)}', 'error')
+            current_app.logger.exception('Failed updating product')
+            flash('Could not update product. Check the values and try again.', 'error')
 
     return render_template('edit_product.html', product=product)
 
@@ -141,9 +160,10 @@ def delete_product(product_id):
         db.session.delete(product)
         db.session.commit()
         flash('Product deleted successfully!', 'success')
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        flash(f'Error deleting product: {str(e)}', 'error')
+        current_app.logger.exception('Failed deleting product')
+        flash('Could not delete product. It may still be linked to other records.', 'error')
 
     return redirect(url_for('admin.admin_products'))
 
@@ -162,15 +182,18 @@ def add_customer():
                 phone=request.form['phone'],
                 address=request.form['address'],
                 age=int(request.form['age']),
-                gender=request.form['gender']
+                gender=request.form['gender'],
+                password_hash=generate_password_hash(request.form['password'])
+                if request.form.get('password') else None
             )
             db.session.add(customer)
             db.session.commit()
             flash('Customer added successfully!', 'success')
             return redirect(url_for('admin.admin_customers'))
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            flash(f'Error adding customer: {str(e)}', 'error')
+            current_app.logger.exception('Failed adding customer')
+            flash('Could not add customer. Check the values and try again.', 'error')
 
     return render_template('add_customer.html')
 
