@@ -4,8 +4,8 @@
 1. [Getting Started](#getting-started)
 2. [Customer Portal Guide](#customer-portal-guide)
 3. [Admin Portal Guide](#admin-portal-guide)
-4. [Features Overview](#features-overview)
-5. [Troubleshooting](#troubleshooting)
+4. [Troubleshooting](#troubleshooting)
+5. [Quick Reference](#quick-reference)
 
 ## Getting Started
 
@@ -25,10 +25,10 @@ The landing page presents two login options:
 
 ### Logging In
 1. Click "Sign in as Customer" on the landing page
-2. Enter your Customer ID (e.g., 1, 2, 3, etc.)
+2. Enter your Customer ID and password
 3. Click "Sign In"
 
-**Sample Customer IDs**: 1-8 (from seed data)
+The demo data has customers 1-8, all with the password `password123`.
 
 ### Customer Dashboard
 
@@ -180,7 +180,7 @@ The admin dashboard provides access to five main management areas:
    - **Gender**: Select Male, Female, or Other
 3. Click "Add Customer"
 4. Customer ID will be auto-generated
-5. Provide the Customer ID to the customer for portal access
+5. Give the customer their Customer ID and the portal password you set
 
 ---
 
@@ -242,49 +242,18 @@ The Reports section provides four comprehensive views:
 
 ---
 
-## Features Overview
-
-### Key Capabilities
-
-#### For Customers
-✅ Secure login with Customer ID  
-✅ View all prescriptions  
-✅ Add new prescriptions online  
-✅ Track medicine details and instructions  
-✅ Check prescription validity  
-
-#### For Admin
-✅ Complete employee management (CRUD)  
-✅ Full product inventory control (CRUD)  
-✅ Customer database management  
-✅ Sales analytics by products  
-✅ Stock level monitoring  
-✅ Expiry date alerts  
-✅ Top sellers identification  
-✅ Regulatory traceability  
-
-### Data Integrity Features
-- Batch-level tracking from supplier to sale
-- Prescription linkage to sales
-- Doctor license verification
-- Expiry date monitoring
-- Complete audit trail
-
----
-
 ## Troubleshooting
 
 ### Common Issues and Solutions
 
 #### Cannot Login as Customer
-**Issue**: "Invalid Customer ID" error  
-**Solution**: 
-- Verify you're using a valid Customer ID (1-8 in demo)
-- Check if customer exists in database
-- Contact admin to create your account
+**Issue**: "Customer ID or password is incorrect"  
+**Solution**:
+- Check the Customer ID printed on your bill
+- Customers added without a portal password cannot sign in. Ask the pharmacy to set one.
 
 #### Cannot Login as Admin
-**Issue**: "Invalid credentials" error  
+**Issue**: "Username or password is incorrect"  
 **Solution**:
 - Default credentials:
   - Username: `admin`
@@ -304,9 +273,8 @@ The Reports section provides four comprehensive views:
 **Issue**: Database connection errors  
 **Solution**:
 1. Stop the server (Ctrl+C)
-2. Delete `pharmacy.db` file
-3. Run: `python seed_data.py`
-4. Restart: `python app.py`
+2. Run `python seed_data.py` to reset `instance/pharmacy.db` with demo data
+3. Restart: `python app.py`
 
 #### Missing or Incorrect Data
 **Issue**: Expected data not showing  
@@ -337,37 +305,8 @@ The Reports section provides four comprehensive views:
 If you encounter persistent issues:
 1. Check the terminal output for error messages
 2. Review the `app.py` logs
-3. Verify all dependencies are installed: `pip install -r requirements.txt`
-4. Ensure Python version is 3.8 or higher
-5. Check file permissions in the project directory
-
----
-
-## Best Practices
-
-### For Customers
-1. Keep your Customer ID secure
-2. Update prescriptions promptly
-3. Verify medicine details before purchase
-4. Check prescription validity dates
-5. Provide complete doctor information
-
-### For Admin
-1. Regular data backups
-2. Monitor near-expiry items weekly
-3. Review top sellers for stock planning
-4. Verify employee information accuracy
-5. Maintain accurate product pricing
-6. Check stock levels daily
-7. Ensure regulatory compliance
-8. Archive old records periodically
-
-### System Maintenance
-1. Regular database backups
-2. Monitor application logs
-3. Update dependencies periodically
-4. Test all features after updates
-5. Keep documentation current
+4. Reinstall dependencies: `pip install -r requirements.txt`
+5. Use Python 3.10 or newer
 
 ---
 
@@ -375,7 +314,7 @@ If you encounter persistent issues:
 
 ### Login Credentials (Demo)
 - **Admin**: admin / admin123
-- **Customers**: Use IDs 1-8
+- **Customers**: IDs 1-8 / password123
 
 ### Common Actions
 - **Add Data**: Use green "Add" buttons
@@ -388,25 +327,3 @@ If you encounter persistent issues:
 - Click logo/title to return to landing page
 - Use "Back to Dashboard" to return to main menu
 - Use "Logout" in top-right to sign out
-
-### Keyboard Shortcuts
-- Tab: Move between form fields
-- Enter: Submit forms
-- Esc: Close modals
-- Ctrl+F: Search in tables (browser function)
-
----
-
-## Support and Feedback
-
-For additional support:
-- Review README.md for technical details
-- Check app.py for route definitions
-- Examine models/__init__.py for database structure
-- Review templates for UI components
-
----
-
-**Version**: 1.0  
-**Last Updated**: 2024  
-**Platform**: Flask + SQLite
