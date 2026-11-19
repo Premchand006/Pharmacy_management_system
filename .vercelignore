@@ -5,3 +5,7 @@ logs/
 __pycache__/
 *.db
 .env
+tests/
+reports/
+research_notes/
+.github/
