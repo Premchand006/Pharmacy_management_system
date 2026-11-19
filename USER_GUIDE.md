@@ -1,329 +1,101 @@
-# Pharmacy Management System - User Guide
+# User guide
 
-## Table of Contents
-1. [Getting Started](#getting-started)
-2. [Customer Portal Guide](#customer-portal-guide)
-3. [Admin Portal Guide](#admin-portal-guide)
-4. [Troubleshooting](#troubleshooting)
-5. [Quick Reference](#quick-reference)
+How to do the everyday jobs at the counter. Staff sign in at `/login`,
+customers at `/portal/login`.
 
-## Getting Started
+## First-time setup (admin)
 
-### Accessing the Application
-1. Ensure the Flask server is running: `python app.py`
-2. Open your web browser
-3. Navigate to: `http://localhost:5000`
+1. **Settings**: enter the pharmacy name, address, phone, GSTIN and drug
+   licence numbers (Form 20, Form 21, and Form 20F if you stock Schedule X
+   drugs). Set the invoice prefix. Tick the composition scheme box only if
+   you are registered under it.
+2. **Staff**: add each person. Give a username and password to anyone who
+   will use the system. Enter the pharmacist registration number for
+   registered pharmacists; only they can be recorded as the dispensing
+   pharmacist on prescription sales. Choose **Admin** access only for
+   people who should manage staff and settings.
+3. **Suppliers**: add each distributor with their wholesale drug licence
+   number and its validity date.
+4. **Products**: add what you sell with the correct schedule, HSN code,
+   GST rate, MRP and reorder level. Scan the barcode into the barcode field
+   so the counter can find it by scanning.
 
-### Landing Page
-The landing page presents two login options:
-- **Sign in as Customer**: For patients/customers to view and manage prescriptions
-- **Sign in as Admin**: For pharmacy staff to manage operations
+## Receiving stock
 
----
+**Stock → Purchases → Receive stock.** Choose the supplier, enter their
+invoice number and date, then one line per batch: product, batch number,
+expiry, quantity, cost per pack and the MRP printed on the pack. Saving
+adds the batches to stock.
 
-## Customer Portal Guide
+## Making a bill
 
-### Logging In
-1. Click "Sign in as Customer" on the landing page
-2. Enter your Customer ID and password
-3. Click "Sign In"
+1. **New bill.** Scan or type the medicine name and press Enter. Repeat for
+   each item and change quantities in the list.
+2. Optionally pick the customer by phone number or name. Their name and
+   address fill the prescription fields.
+3. If any item is Schedule H, H1, X or NDPS, the **Prescription details**
+   box appears. Fill in the patient's and doctor's names, addresses and the
+   doctor's registration number, and choose the dispensing pharmacist. If
+   the customer sent the prescription through the portal, type its number
+   instead and the doctor's details are filled in for you.
+4. Choose the payment mode, add a discount if any, and press
+   **Save and print**. The print dialog opens; choose A5 or 80 mm.
 
-The demo data has customers 1-8, all with the password `password123`.
+The bill is refused, with the reason shown, if stock is short, a batch has
+expired, prescription details are missing, or a prescription has already
+been dispensed as many times as the doctor allowed.
 
-### Customer Dashboard
+### Cancelling a bill
 
-After logging in, you'll see two main options:
+Open the invoice, type the reason and press **Void**. The stock goes back
+into its batches and the invoice stays on record marked VOID. Counter
+staff can void only today's bills; older ones need an admin.
 
-#### 1. View Prescriptions
-- **Purpose**: View all your prescriptions
-- **Features**:
-  - List of all prescriptions with doctor details
-  - Prescription date and validity period
-  - Hospital information
-  - Status indicators (valid/expired)
+## Expired and damaged stock
 
-#### 2. Add Prescription
-- **Purpose**: Submit a new prescription
-- **Steps**:
-  1. Enter doctor information (ID and license number)
-  2. Set prescription date and validity
-  3. Enter hospital name
-  4. Add medicine items:
-     - Select medicine from dropdown
-     - Enter dosage (e.g., "1 tablet 2 times daily")
-     - Enter duration (e.g., "7 days")
-     - Specify quantity needed
-     - Add special instructions (optional)
-  5. Click "Add Item" to add more medicines
-  6. Click "Save Prescription" to submit
+**Stock → Batches**, filter **Expired, still on shelf**. For each batch
+enter the quantity, choose the reason and press **Remove**. The dashboard
+shows how many expired batches are still counted as stock.
 
-### Viewing Prescription Items
-1. From "My Prescriptions", click "View Items" on any prescription
-2. See detailed information:
-   - Medicine name and brand
-   - Form and strength
-   - Dosage instructions
-   - Duration of treatment
-   - Quantity prescribed
-   - Special instructions
+## Registers and returns
 
----
+- **Drug registers**: choose the schedule and dates. Print it or download
+  the CSV. The H1 register must be kept for three years.
+- **Schedule X register**: one page per drug with every receipt, supply and
+  the running balance.
+- **Purchase register**: everything bought, with supplier licence, batch
+  and manufacturer.
+- **GST returns**: choose the month. The B2C, HSN, B2B and documents-issued
+  tables match the GSTR-1 sections; the CSV buttons give files your
+  accountant can use.
+- **Trace a batch** (under Stock & sales): enter a batch number to see who
+  supplied it and every bill it went out on. Use it for a recall.
 
-## Admin Portal Guide
+## Customers
 
-### Logging In
-1. Click "Sign in as Admin" on the landing page
-2. Enter credentials:
-   - **Username**: admin
-   - **Password**: admin123
-3. Click "Sign In"
+Add a customer with name and phone; the address is only needed when they
+buy prescription drugs. To let them use the portal, set a portal password
+and tell them their customer ID.
 
-### Admin Dashboard
+If a customer asks for their data to be deleted, an admin presses **Erase
+profile** in the customer list. Their contact details and login are
+removed. Past invoices and register entries keep the name and address
+copied at the time of sale, because the Drugs Rules and GST law require
+those records to be kept.
 
-The admin dashboard provides access to five main management areas:
+## For customers
 
----
-
-### 1. Employee Management
-
-#### Viewing Employees
-- Shows list of all employees with:
-  - Employee ID
-  - Name
-  - Salary
-  - Work shift
-  - Role
-  - Years of experience
-
-#### Adding an Employee
-1. Click "Add Employee"
-2. Fill in the form:
-   - **Full Name**: Employee's complete name
-   - **Salary**: Annual or monthly salary
-   - **Work Shift**: Select from Morning, Evening, Night, or Full Day
-   - **Role**: Choose from:
-     - Pharmacist
-     - Assistant Pharmacist
-     - Store Manager
-     - Sales Associate
-     - Inventory Clerk
-     - Cashier
-     - Manager
-   - **Experience**: Total years of experience
-3. Click "Add Employee"
-
-#### Editing an Employee
-1. Click "Edit" button next to employee
-2. Modify required fields
-3. Click "Update Employee"
-
-#### Deleting an Employee
-1. Click "Delete" button
-2. Confirm deletion in modal dialog
-3. Employee will be permanently removed
-
----
-
-### 2. Product Management
-
-#### Viewing Products
-- Shows inventory with:
-  - Product ID
-  - Medicine name and brand
-  - Form (Tablet, Syrup, etc.) and strength
-  - Prescription type (OTC or Prescription)
-  - MRP and Unit Price
-
-#### Adding a Product
-1. Click "Add Product"
-2. Fill in details:
-   - **Brand Name**: Commercial name (e.g., "Tylenol")
-   - **Medicine Name**: Generic name (e.g., "Paracetamol")
-   - **Form**: Select type (Tablet, Capsule, Syrup, etc.)
-   - **Strength**: Dosage strength (e.g., "500mg")
-   - **Packing**: Package description (e.g., "Strip of 10")
-   - **Prescription Type**:
-     - OTC: Can be sold without prescription
-     - Prescription: Requires doctor's prescription
-   - **MRP**: Maximum Retail Price
-   - **Unit Price**: Selling price (should be ≤ MRP)
-3. Click "Add Product"
-
-#### Editing a Product
-1. Click "Edit" next to product
-2. Update necessary fields
-3. Click "Update Product"
-
-#### Deleting a Product
-1. Click "Delete"
-2. Confirm deletion
-3. Product will be removed (affects related records)
-
----
-
-### 3. Customer Management
-
-#### Viewing Customers
-- Displays all registered customers with:
-  - Customer ID
-  - Name and contact information
-  - Age and gender
-  - Number of prescriptions
-
-#### Adding a Customer
-1. Click "Add Customer"
-2. Enter information:
-   - **Full Name**: Customer's complete name
-   - **Phone Number**: Contact number (e.g., "+1-234-567-8900")
-   - **Address**: Complete address with street, city, zip
-   - **Age**: Customer's age
-   - **Gender**: Select Male, Female, or Other
-3. Click "Add Customer"
-4. Customer ID will be auto-generated
-5. Give the customer their Customer ID and the portal password you set
-
----
-
-### 4. Sales Reports
-
-#### Viewing Sales by Products
-- Shows sales aggregated by products:
-  - Brand and medicine names
-  - Associated supplier
-  - Total quantity sold
-  - Total sales amount
-  - Grand totals at bottom
-
-**Use Case**: Track which products are selling and from which suppliers
-
----
-
-### 5. Reports
-
-The Reports section provides four comprehensive views:
-
-#### A. Current Stock Summary
-- **Purpose**: Monitor inventory levels
-- **Information**:
-  - All products with available quantities
-  - Stock status indicators:
-    - 🔴 Red badge: Low stock (<10 units)
-    - 🟡 Yellow badge: Medium stock (10-50 units)
-    - 🟢 Green badge: Good stock (>50 units)
-  - Nearest expiry date for each product
-
-#### B. Near Expiry Items (Within 30 Days)
-- **Purpose**: Prevent stock wastage
-- **Features**:
-  - Lists all items expiring soon
-  - Shows batch numbers
-  - Displays days until expiry
-  - Priority levels:
-    - **Critical**: ≤7 days (Red)
-    - **Warning**: 8-15 days (Yellow)
-    - **Monitor**: 16-30 days (Blue)
-- **Action**: Plan promotions or discounts for near-expiry items
-
-#### C. Top Selling Medicines (Top 10)
-- **Purpose**: Identify popular products
-- **Features**:
-  - Ranked list with medals (🥇🥈🥉)
-  - Visual performance bars
-  - Percentage comparison to top seller
-- **Use Case**: Stock planning and inventory optimization
-
-#### D. Batch → Sale → Prescription Traceability
-- **Purpose**: Regulatory compliance
-- **Information**:
-  - Complete traceability chain visualization
-  - Links batches to sales to prescriptions
-  - Ensures pharmaceutical compliance
-  - Enables quick recall procedures if needed
-
----
+Sign in with the customer ID on your bill and the password the pharmacy
+gave you. You can see your prescriptions and bills, and **Send a
+prescription** before you visit. Bring the original prescription when you
+collect the medicines.
 
 ## Troubleshooting
 
-### Common Issues and Solutions
-
-#### Cannot Login as Customer
-**Issue**: "Customer ID or password is incorrect"  
-**Solution**:
-- Check the Customer ID printed on your bill
-- Customers added without a portal password cannot sign in. Ask the pharmacy to set one.
-
-#### Cannot Login as Admin
-**Issue**: "Username or password is incorrect"  
-**Solution**:
-- Default credentials:
-  - Username: `admin`
-  - Password: `admin123`
-- Check for typing errors
-- Ensure Caps Lock is off
-
-#### Application Not Loading
-**Issue**: Server not responding  
-**Solution**:
-1. Check if Flask server is running
-2. Restart server: `python app.py`
-3. Verify port 5000 is not in use
-4. Check terminal for error messages
-
-#### Database Errors
-**Issue**: Database connection errors  
-**Solution**:
-1. Stop the server (Ctrl+C)
-2. Run `python seed_data.py` to reset `instance/pharmacy.db` with demo data
-3. Restart: `python app.py`
-
-#### Missing or Incorrect Data
-**Issue**: Expected data not showing  
-**Solution**:
-- Check if database was properly seeded
-- Re-run seed script if needed
-- Verify form inputs are correct
-- Check console for error messages
-
-#### Form Submission Fails
-**Issue**: Form doesn't submit  
-**Solution**:
-- Ensure all required fields are filled
-- Check for validation errors (red borders)
-- Verify data types (numbers for age, price, etc.)
-- Check browser console for JavaScript errors
-
-#### Pages Not Loading Properly
-**Issue**: Styling or layout issues  
-**Solution**:
-- Clear browser cache (Ctrl+Shift+R)
-- Check if CSS and JS files are loading
-- Verify internet connection (for Bootstrap CDN)
-- Try a different browser
-
-### Getting Help
-
-If you encounter persistent issues:
-1. Check the terminal output for error messages
-2. Review the `app.py` logs
-4. Reinstall dependencies: `pip install -r requirements.txt`
-5. Use Python 3.10 or newer
-
----
-
-## Quick Reference
-
-### Login Credentials (Demo)
-- **Admin**: admin / admin123
-- **Customers**: IDs 1-8 / password123
-
-### Common Actions
-- **Add Data**: Use green "Add" buttons
-- **Edit Data**: Yellow "Edit" button
-- **Delete Data**: Red "Delete" button (with confirmation)
-- **View Details**: Blue "View" button
-- **Return**: Grey "Back" button
-
-### Navigation
-- Click logo/title to return to landing page
-- Use "Back to Dashboard" to return to main menu
-- Use "Logout" in top-right to sign out
+- **"Too many failed attempts"**: wait 15 minutes. An admin can set a new
+  password from the Staff page.
+- **"Form expired"**: you were signed out after an hour of inactivity.
+  Reload the page and sign in again.
+- **A product does not appear at the counter**: it has no unexpired stock,
+  or it has been discontinued on the Products page.
+- **Invoice shows no GSTIN or licence**: fill them in under Settings.
