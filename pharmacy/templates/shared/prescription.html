@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, schedule_badge %}
+{% block title %}Prescription #{{ pres.pres_id }}{% endblock %}
+{% macro body() %}
+{% call page_header("Prescription #" ~ pres.pres_id, pres.date.strftime("%d %B %Y")) %}
+  {% if staff_view and pres.times_dispensed <= pres.repeats_allowed %}
+    <a class="btn btn-primary" href="{{ url_for('sales.counter', pres_id=pres.pres_id) }}">Bill this prescription</a>
+  {% endif %}
+{% endcall %}
+<div class="row g-3">
+  <div class="col-md-6"><div class="panel h-100">
+    <h2>Doctor</h2>
+    <div class="fw-semibold">{{ pres.doctor_name }}</div>
+    <div>Reg. no. {{ pres.doctor_reg_no }}</div>
+    <div class="text-body-secondary">{{ pres.hospital_name }}</div>
+    <div class="text-body-secondary">{{ pres.doctor_address }}</div>
+  </div></div>
+  <div class="col-md-6"><div class="panel h-100">
+    <h2>Patient</h2>
+    <div class="fw-semibold">{{ pres.customer.name }}</div>
+    {% if staff_view %}<div class="text-body-secondary">Customer ID {{ pres.c_id }} · {{ pres.customer.phone }}</div>{% endif %}
+    <div class="mt-2">Dispensed {{ pres.times_dispensed }} of {{ pres.repeats_allowed + 1 }} time{{ "s" if pres.repeats_allowed }} allowed.</div>
+  </div></div>
+</div>
+<div class="panel mt-3 table-wrap">
+  <h2>Medicines</h2>
+  <table class="table align-middle">
+    <thead><tr><th>#</th><th>Medicine</th><th>Schedule</th><th>Dosage</th><th>Duration</th><th class="num">Qty</th><th>Instructions</th></tr></thead>
+    <tbody>
+    {% for i in pres.items %}
+      <tr><td>{{ i.line_no }}</td><td>{{ i.product.label }}</td><td>{{ schedule_badge(i.product.schedule) }}</td>
+        <td>{{ i.dosage }}</td><td>{{ i.duration }}</td><td class="num">{{ i.qty }}</td><td>{{ i.instructions }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% if pres.notes %}<p class="mt-3 mb-0"><strong>Notes:</strong> {{ pres.notes }}</p>{% endif %}
+</div>
+{% if pres.sales %}
+<div class="panel">
+  <h2>Bills against this prescription</h2>
+  {% for s in pres.sales %}
+    <div>{% if staff_view %}<a href="{{ url_for('sales.invoice', sb_id=s.sb_id) }}">{{ s.invoice_no }}</a>{% else %}<a href="{{ url_for('portal.purchase', sb_id=s.sb_id) }}">{{ s.invoice_no }}</a>{% endif %}
+      · {{ s.sold_at|local }} · ₹{{ s.total|inr }}{% if s.status == "void" %} <span class="badge text-bg-danger">Void</span>{% endif %}</div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endmacro %}
+{% block content %}{{ body() }}{% endblock %}
+{% block public_content %}{{ body() }}{% endblock %}

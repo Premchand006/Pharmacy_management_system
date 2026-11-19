@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header %}
+{% block title %}Audit log{% endblock %}
+{% block content %}
+{{ page_header("Audit log", "Every change made through the app, newest first. Entries cannot be edited or deleted here.") }}
+<form class="row g-2 mb-3" method="get">
+  <div class="col-auto"><label class="visually-hidden" for="entity">Record type</label>
+    <select class="form-select" id="entity" name="entity">
+      <option value="">All records</option>
+      {% for e in entities %}<option {% if e == entity %}selected{% endif %}>{{ e }}</option>{% endfor %}
+    </select></div>
+  <div class="col-auto"><button class="btn btn-outline-secondary" type="submit">Filter</button></div>
+</form>
+<div class="panel table-wrap">
+  <table class="table table-sm align-middle">
+    <thead><tr><th>When</th><th>Who</th><th>Action</th><th>Record</th><th>Changes</th><th>IP</th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr><td class="text-nowrap">{{ r.at|local("%d %b %Y %H:%M:%S") }}</td><td>{{ r.actor }}</td><td>{{ r.action }}</td>
+        <td>{{ r.entity }} {{ r.entity_id }}</td><td class="small text-break" style="max-width: 32rem">{{ r.changes if r.changes != "{}" else "" }}</td><td class="small">{{ r.ip }}</td></tr>
+    {% else %}<tr><td colspan="6" class="text-body-secondary">Nothing logged.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+<nav class="d-flex gap-2 mt-3" aria-label="Pages">
+  {% if page > 1 %}<a class="btn btn-outline-secondary" href="{{ url_for('reports.audit_log', page=page - 1, entity=entity) }}">Newer</a>{% endif %}
+  {% if has_more %}<a class="btn btn-outline-secondary" href="{{ url_for('reports.audit_log', page=page + 1, entity=entity) }}">Older</a>{% endif %}
+</nav>
+{% endblock %}

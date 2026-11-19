@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% from "_form.html" import csrf %}
+{% block title %}Invoice {{ sale.invoice_no }}{% endblock %}
+{% block body_attrs %}{% if autoprint %}data-autoprint{% endif %}{% endblock %}
+{% macro body() %}
+{% set p = pharmacy %}
+{% set scheduled = sale.items|selectattr("schedule", "in", ["H", "H1", "X", "NDPS"])|list %}
+<div class="d-flex flex-wrap gap-2 mb-3 no-print">
+  {% if not customer_view %}
+  <a class="btn btn-primary" href="{{ url_for('sales.counter') }}"><i class="bi bi-receipt" aria-hidden="true"></i> Next bill</a>
+  {% endif %}
+  <button type="button" class="btn btn-outline-secondary" data-print="a5"><i class="bi bi-printer" aria-hidden="true"></i> Print A5</button>
+  <button type="button" class="btn btn-outline-secondary" data-print="thermal">Print 80 mm</button>
+  {% if not customer_view and sale.status == "completed" %}
+  <form method="post" action="{{ url_for('sales.void', sb_id=sale.sb_id) }}" class="d-flex gap-2 ms-auto"
+        data-confirm="Void this invoice? Stock goes back to its batches. The invoice stays on record as cancelled.">
+    {{ csrf() }}
+    <label class="visually-hidden" for="reason">Reason for voiding</label>
+    <input class="form-control" id="reason" name="reason" placeholder="Reason for voiding" required maxlength="200">
+    <button class="btn btn-outline-danger" type="submit">Void</button>
+  </form>
+  {% endif %}
+</div>
+
+<article class="invoice" aria-label="Invoice {{ sale.invoice_no }}">
+  <header class="d-flex justify-content-between flex-wrap gap-2 mb-2">
+    <div>
+      <h2>{{ p.name }}</h2>
+      <div class="muted" style="white-space: pre-line">{{ p.address }}</div>
+      {% if p.phone %}<div class="muted">Phone {{ p.phone }}</div>{% endif %}
+      <div class="muted">{% if p.gstin %}GSTIN {{ p.gstin }}{% endif %}{% if p.licence_20 %} · D.L. {{ p.licence_20 }}{% endif %}{% if p.licence_21 %}, {{ p.licence_21 }}{% endif %}{% if p.licence_20f and sale.items|selectattr("schedule", "equalto", "X")|list %}, {{ p.licence_20f }}{% endif %}</div>
+    </div>
+    <div class="text-end">
+      <div class="fw-bold">{{ "BILL OF SUPPLY" if p.composition_scheme else "TAX INVOICE" }}</div>
+      <div>No. <strong>{{ sale.invoice_no }}</strong></div>
+      <div>{{ sale.sold_at|local }}</div>
+      {% if sale.status == "void" %}<div class="void-stamp mt-1">VOID</div>{% endif %}
+    </div>
+  </header>
+
+  <div class="d-flex justify-content-between flex-wrap gap-2 mb-2">
+    <div>
+      <div><span class="muted">Patient:</span> {{ sale.patient_name or "Walk-in customer" }}{% if sale.c_id %} (Customer ID {{ sale.c_id }}){% endif %}</div>
+      {% if sale.patient_address %}<div class="muted">{{ sale.patient_address }}</div>{% endif %}
+      {% if sale.buyer_gstin %}<div><span class="muted">Buyer GSTIN:</span> {{ sale.buyer_gstin }}</div>{% endif %}
+    </div>
+    {% if sale.prescriber_name %}
+    <div class="text-end">
+      <div><span class="muted">Prescribed by:</span> {{ sale.prescriber_name }} (Reg. {{ sale.prescriber_reg_no }})</div>
+      <div class="muted">{{ sale.prescriber_address }}</div>
+      {% if sale.pres_id %}<div class="muted">Prescription #{{ sale.pres_id }}</div>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <table>
+    <thead><tr><th>#</th><th>Item</th><th>HSN</th><th>Batch</th><th>Exp.</th><th class="num">Qty</th><th class="num">MRP</th>
+      {% if not p.composition_scheme %}<th class="num">GST%</th><th class="num">Taxable</th>{% endif %}<th class="num">Amount</th></tr></thead>
+    <tbody>
+    {% for i in sale.items %}
+      <tr>
+        <td>{{ i.line_no }}</td>
+        <td>{{ i.item_name }}{% if i.schedule != "OTC" %} <strong>[{{ i.schedule }}]</strong>{% endif %}
+          <div class="muted small">{{ i.batch.manufacturer_name }}</div></td>
+        <td>{{ i.hsn_code }}</td>
+        <td>{{ i.batch.batch_no }}</td>
+        <td>{{ i.batch.expiry_date.strftime("%m/%y") }}</td>
+        <td class="num">{{ i.qty }}</td>
+        <td class="num">{{ i.mrp|inr }}</td>
+        {% if not p.composition_scheme %}<td class="num">{{ i.gst_rate|int }}</td><td class="num">{{ i.taxable_value|inr }}</td>{% endif %}
+        <td class="num">{{ i.line_total|inr }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-between flex-wrap gap-3 mt-2">
+    <div class="small">
+      {% if not p.composition_scheme %}
+      <div>Taxable value ₹{{ sale.taxable_total|inr }} · CGST ₹{{ sale.cgst_total|inr }} · SGST ₹{{ sale.sgst_total|inr }}</div>
+      {% else %}<div>Composition taxable person, not eligible to collect tax on supplies.</div>{% endif %}
+      <div>Paid by {{ sale.payment_mode }} · Billed by {{ sale.billed_by.name }}</div>
+      {% if sale.pharmacist %}<div>Dispensed by {{ sale.pharmacist.name }}, Reg. Pharmacist {{ sale.pharmacist.pharmacist_reg_no }}</div>{% endif %}
+      {% if scheduled %}<div class="mt-3">Pharmacist's signature: ______________________</div>{% endif %}
+    </div>
+    <table style="width: auto; min-width: 220px">
+      <tr><td>MRP total</td><td class="num">{{ sale.gross_total|inr }}</td></tr>
+      {% if sale.discount_total %}<tr><td>Discount</td><td class="num">−{{ sale.discount_total|inr }}</td></tr>{% endif %}
+      {% if sale.round_off %}<tr><td>Round off</td><td class="num">{{ sale.round_off|inr }}</td></tr>{% endif %}
+      <tr><th>Total ₹</th><th class="num">{{ sale.total|inr }}</th></tr>
+    </table>
+  </div>
+  {% if sale.status == "void" %}
+    <p class="mt-2 mb-0"><strong>Cancelled</strong> {{ sale.voided_at|local }}{% if sale.voided_by %} by {{ sale.voided_by.name }}{% endif %}: {{ sale.void_reason }}</p>
+  {% endif %}
+  <p class="muted small mt-2 mb-0">Prices include GST. Medicines once sold are not taken back except as the law allows. Get well soon.</p>
+</article>
+{% endmacro %}
+{% block content %}{{ body() }}{% endblock %}
+{% block public_content %}{{ body() }}{% endblock %}

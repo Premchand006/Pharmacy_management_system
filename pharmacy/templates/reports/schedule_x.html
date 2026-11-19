@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, date_range %}
+{% block title %}Schedule X register{% endblock %}
+{% block content %}
+{{ page_header("Schedule X register", "One page per drug with receipts, supplies and the running balance (Rule 65(21)). Print and file it; some states expect a bound register.") }}
+{{ date_range(start, end) }}
+<button type="button" class="btn btn-sm btn-outline-secondary mb-3 no-print" data-print><i class="bi bi-printer" aria-hidden="true"></i> Print</button>
+{% for page in pages %}
+<div class="panel table-wrap">
+  <h2>{{ page.product.label }} · {{ page.product.medicine_name }}</h2>
+  <table class="table table-sm align-middle">
+    <thead><tr><th>Date</th><th>Entry</th><th>From / to</th><th>Reference</th><th>Batch</th><th class="num">In</th><th class="num">Out</th><th class="num">Balance</th></tr></thead>
+    <tbody>
+      <tr><td colspan="7">Opening balance on {{ start.strftime("%d %b %Y") }}</td><td class="num">{{ page.opening }}</td></tr>
+      {% for e in page.rows %}
+      <tr><td>{{ e.day.strftime("%d %b %Y") }}</td><td>{{ e.kind }}</td><td>{{ e.who }}</td><td>{{ e.ref }}</td>
+        <td>{{ e.batch.batch_no }}</td><td class="num">{{ e.qty if e.qty > 0 else "" }}</td><td class="num">{{ -e.qty if e.qty < 0 else "" }}</td><td class="num">{{ e.balance }}</td></tr>
+      {% endfor %}
+      <tr><th colspan="7">Closing balance on {{ end.strftime("%d %b %Y") }}</th><th class="num">{{ page.closing }}</th></tr>
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="panel"><p class="text-body-secondary mb-0">No Schedule X products are set up.</p></div>
+{% endfor %}
+{% endblock %}

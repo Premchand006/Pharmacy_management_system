@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, csrf %}
+{% block title %}Suppliers{% endblock %}
+{% block content %}
+{% call page_header("Suppliers", "Buy only from licensed dealers (Drugs Rules, Form 20 conditions).") %}
+  <a class="btn btn-primary" href="{{ url_for('staff.supplier_form') }}"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add supplier</a>
+{% endcall %}
+<div class="panel table-wrap">
+  <table class="table align-middle">
+    <thead><tr><th>Firm</th><th>Drug licence</th><th>Valid until</th><th>GSTIN</th><th>Phone</th><th></th></tr></thead>
+    <tbody>
+    {% for s in suppliers %}
+      <tr class="{{ 'text-body-secondary' if not s.is_active }}">
+        <td><a href="{{ url_for('staff.supplier_form', s_id=s.s_id) }}">{{ s.firm_name }}</a></td>
+        <td>{{ s.drug_licence or "—" }}</td>
+        <td class="{{ 'text-bad' if s.licence_valid_until and s.licence_valid_until < today }}">{{ s.licence_valid_until.strftime("%d %b %Y") if s.licence_valid_until else "—" }}</td>
+        <td>{{ s.gstin or "—" }}</td>
+        <td>{{ s.phone }}</td>
+        <td class="text-end">
+          {% if g.user.is_admin %}
+          <form method="post" action="{{ url_for('staff.supplier_toggle', s_id=s.s_id) }}">
+            {{ csrf() }}<button class="btn btn-sm btn-outline-secondary" type="submit">{{ "Deactivate" if s.is_active else "Reactivate" }}</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="text-body-secondary">No suppliers yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

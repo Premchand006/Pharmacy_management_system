@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header %}
+{% block title %}Reorder list{% endblock %}
+{% block content %}
+{{ page_header("Reorder list", "Products at or below their reorder level, counting only unexpired stock.") }}
+<div class="panel table-wrap">
+  <table class="table align-middle">
+    <thead><tr><th>Product</th><th>Generic</th><th>Pack</th><th class="num">In stock</th><th class="num">Reorder level</th></tr></thead>
+    <tbody>
+    {% for p, qty in rows %}
+      <tr><td><a href="{{ url_for('staff.product_form', p_id=p.p_id) }}">{{ p.label }}</a></td><td>{{ p.medicine_name }}</td><td>{{ p.packing }}</td>
+        <td class="num {{ 'text-bad' if qty == 0 else 'text-warn' }}">{{ qty }}</td><td class="num">{{ p.reorder_level }}</td></tr>
+    {% else %}
+      <tr><td colspan="5" class="text-body-secondary">Nothing needs reordering.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<button type="button" class="btn btn-outline-secondary mt-3 no-print" data-print><i class="bi bi-printer" aria-hidden="true"></i> Print list</button>
+{% endblock %}

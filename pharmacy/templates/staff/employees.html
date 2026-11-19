@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, csrf %}
+{% block title %}Staff{% endblock %}
+{% block content %}
+{% call page_header("Staff", "Logins, roles and pharmacist registrations.") %}
+  <a class="btn btn-primary" href="{{ url_for('staff.employee_form') }}"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add staff member</a>
+{% endcall %}
+<div class="panel table-wrap">
+  <table class="table align-middle">
+    <thead><tr><th>Name</th><th>Job title</th><th>Login</th><th>Access</th><th>Pharmacist reg.</th><th>Shift</th><th></th></tr></thead>
+    <tbody>
+    {% for e in employees %}
+      <tr class="{{ 'text-body-secondary' if not e.is_active }}">
+        <td><a href="{{ url_for('staff.employee_form', e_id=e.e_id) }}">{{ e.name }}</a>{% if not e.is_active %} <span class="badge text-bg-secondary">Inactive</span>{% endif %}</td>
+        <td>{{ e.role }}</td>
+        <td>{{ e.username or "—" }}</td>
+        <td>{{ "Admin" if e.is_admin else "Staff" }}</td>
+        <td>{{ e.pharmacist_reg_no or "—" }}</td>
+        <td>{{ e.work_shift }}</td>
+        <td class="text-end">
+          {% if e.e_id != g.user.e_id %}
+          <form method="post" action="{{ url_for('staff.employee_toggle', e_id=e.e_id) }}"
+                data-confirm="{{ ('Deactivate ' if e.is_active else 'Reactivate ') ~ e.name ~ '?' }}">
+            {{ csrf() }}<button class="btn btn-sm btn-outline-secondary" type="submit">{{ "Deactivate" if e.is_active else "Reactivate" }}</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="small text-body-secondary mt-2">Staff are deactivated rather than deleted, so their name stays on the bills and registers they signed.</p>
+{% endblock %}

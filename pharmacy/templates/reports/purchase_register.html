@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, date_range %}
+{% block title %}Purchase register{% endblock %}
+{% block content %}
+{{ page_header("Purchase register", "Drugs bought, with supplier licence, batch and manufacturer (Rule 65(4)(4)).") }}
+{{ date_range(start, end) }}
+<a class="btn btn-sm btn-outline-secondary mb-3" href="{{ url_for('reports.purchase_register', format='csv', **{'from': start, 'to': end}) }}"><i class="bi bi-download" aria-hidden="true"></i> CSV</a>
+<div class="panel table-wrap">
+  <table class="table table-sm align-middle">
+    <thead><tr><th>Received</th><th>Supplier &amp; licence</th><th>Invoice</th><th>Drug</th><th>Batch</th><th>Expiry</th><th>Manufacturer</th><th class="num">Qty</th></tr></thead>
+    <tbody>
+    {% for b, p, s, pr in rows %}
+      <tr><td>{{ p.received_on.strftime("%d %b %Y") }}</td><td>{{ s.firm_name }}<div class="small text-body-secondary">{{ s.drug_licence }}</div></td>
+        <td><a href="{{ url_for('inventory.purchase', purchase_id=p.purchase_id) }}">{{ p.supplier_invoice_no }}</a></td>
+        <td>{{ pr.label }}</td><td>{{ b.batch_no }}</td><td>{{ b.expiry_date.strftime("%m/%y") }}</td><td>{{ b.manufacturer_name }}</td><td class="num">{{ b.qty_received }}</td></tr>
+    {% else %}<tr><td colspan="8" class="text-body-secondary">Nothing received in this period.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

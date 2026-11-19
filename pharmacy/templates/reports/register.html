@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, date_range %}
+{% block title %}Drug registers{% endblock %}
+{% block content %}
+{% call page_header("Drug registers", "Prescription supplies recorded at the counter (Drugs Rules, Rule 65(3)). The H1 register must be kept for three years.") %}
+  <a class="btn btn-outline-secondary" href="{{ url_for('reports.schedule_x') }}">Schedule X register</a>
+  <a class="btn btn-outline-secondary" href="{{ url_for('reports.purchase_register') }}">Purchase register</a>
+{% endcall %}
+{% call date_range(start, end) %}
+  <div class="col-auto"><label class="form-label small" for="schedule">Register</label>
+    <select class="form-select" id="schedule" name="schedule">
+      {% for code, label in [("H1","Schedule H1"),("H","Schedule H"),("X","Schedule X"),("NDPS","NDPS"),("ALL","All prescription drugs")] %}
+        <option value="{{ code }}" {% if schedule == code %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select></div>
+{% endcall %}
+<div class="d-flex gap-2 mb-3 no-print">
+  <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('reports.register', schedule=schedule, format='csv', **{'from': start, 'to': end}) }}"><i class="bi bi-download" aria-hidden="true"></i> CSV</a>
+  <button type="button" class="btn btn-sm btn-outline-secondary" data-print><i class="bi bi-printer" aria-hidden="true"></i> Print</button>
+</div>
+<div class="panel table-wrap">
+  <table class="table table-sm align-middle">
+    <thead><tr><th>Date</th><th>Invoice</th><th>Patient &amp; address</th><th>Prescriber</th><th>Drug</th><th class="num">Qty</th><th>Batch / exp. / mfr.</th><th>Pharmacist</th></tr></thead>
+    <tbody>
+    {% for i, s in rows %}
+      <tr>
+        <td>{{ s.sold_at|local("%d %b %Y") }}</td>
+        <td><a href="{{ url_for('sales.invoice', sb_id=s.sb_id) }}">{{ s.invoice_no }}</a></td>
+        <td>{{ s.patient_name }}<div class="small text-body-secondary">{{ s.patient_address }}</div></td>
+        <td>{{ s.prescriber_name }} ({{ s.prescriber_reg_no }})<div class="small text-body-secondary">{{ s.prescriber_address }}</div></td>
+        <td>{{ i.item_name }} <span class="small">[{{ i.schedule }}]</span></td>
+        <td class="num">{{ i.qty }}</td>
+        <td>{{ i.batch.batch_no }} · {{ i.batch.expiry_date.strftime("%m/%y") }}<div class="small text-body-secondary">{{ i.batch.manufacturer_name }}</div></td>
+        <td>{{ s.pharmacist.name if s.pharmacist else "" }}</td>
+      </tr>
+    {% else %}<tr><td colspan="8" class="text-body-secondary">No entries in this period.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

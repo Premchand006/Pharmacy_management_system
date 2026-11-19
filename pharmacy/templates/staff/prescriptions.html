@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header %}
+{% block title %}Prescriptions{% endblock %}
+{% block content %}
+{{ page_header("Prescriptions", "Sent by customers through the portal. Check the original before dispensing.") }}
+<div class="panel table-wrap">
+  <table class="table align-middle">
+    <thead><tr><th>No.</th><th>Date</th><th>Patient</th><th>Doctor</th><th class="num">Items</th><th>Dispensed</th><th></th></tr></thead>
+    <tbody>
+    {% for p in prescriptions %}
+      <tr>
+        <td><a href="{{ url_for('staff.prescription', pres_id=p.pres_id) }}">#{{ p.pres_id }}</a></td>
+        <td>{{ p.date.strftime("%d %b %Y") }}</td>
+        <td>{{ p.customer.name }}</td>
+        <td>{{ p.doctor_name }}</td>
+        <td class="num">{{ p.items|length }}</td>
+        <td>{{ p.times_dispensed }} of {{ p.repeats_allowed + 1 }}</td>
+        <td class="text-end">
+          {% if p.times_dispensed <= p.repeats_allowed %}
+          <a class="btn btn-sm btn-primary" href="{{ url_for('sales.counter', pres_id=p.pres_id) }}">Bill this</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="text-body-secondary">No prescriptions yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

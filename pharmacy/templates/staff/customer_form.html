@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, csrf, field, textarea, select %}
+{% block title %}{{ cust.name or "New customer" }}{% endblock %}
+{% block content %}
+{{ page_header(cust.name or "New customer", ("Customer ID " ~ cust.c_id) if cust.c_id else "Only name and phone are needed. Ask for the address when they buy prescription drugs.") }}
+<form method="post" class="panel">
+  {{ csrf() }}
+  <div class="row g-3">
+    {{ field("name", "Name", cust.name, required=True, maxlength=100) }}
+    {{ field("phone", "Phone", cust.phone, type="tel", required=True, maxlength=20) }}
+    {{ textarea("address", "Address", cust.address) }}
+    {{ field("age", "Age", cust.age, type="number", min=0, max=130, col="col-md-3") }}
+    {{ select("gender", "Gender", [("Female","Female"),("Male","Male"),("Other","Other")], cust.gender or "", required=False, col="col-md-3") }}
+    <div class="col-md-6">
+      <label class="form-label" for="f-password">Portal password <span class="text-body-secondary small">(optional)</span></label>
+      <input class="form-control" id="f-password" name="password" type="password" autocomplete="new-password" minlength="12">
+      <div class="form-text">Lets the customer see their prescriptions and bills online with their Customer ID.</div>
+    </div>
+  </div>
+  <div class="d-flex gap-2 mt-4">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('staff.customers') }}">Cancel</a>
+  </div>
+</form>
+{% if cust.c_id %}
+<div class="panel">
+  <h2>Prescriptions</h2>
+  {% for p in cust.prescriptions %}
+    <div><a href="{{ url_for('staff.prescription', pres_id=p.pres_id) }}">#{{ p.pres_id }}</a> · {{ p.date.strftime("%d %b %Y") }} · {{ p.doctor_name }}</div>
+  {% else %}<p class="text-body-secondary mb-0">None on file.</p>{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

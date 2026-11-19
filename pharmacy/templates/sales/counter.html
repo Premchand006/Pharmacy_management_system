@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% from "_form.html" import csrf %}
+{% block title %}New bill{% endblock %}
+{% block content %}
+<form method="post" action="{{ url_for('sales.checkout') }}" id="counter" autocomplete="off"
+      data-cart="{{ cart_json }}"
+      data-product-url="{{ url_for('sales.product_search') }}"
+      data-customer-url="{{ url_for('sales.customer_search') }}">
+  {{ csrf() }}
+  <div class="page-header">
+    <div><h1>New bill</h1><p class="text-body-secondary mb-0">Scan a barcode or type a medicine name. Stock comes from the batch that expires first.</p></div>
+  </div>
+
+  <div class="counter-grid">
+    <div>
+      <div class="panel">
+        <div class="position-relative">
+          <label class="form-label" for="product-search">Add medicine</label>
+          <input class="form-control form-control-lg" id="product-search" type="search" placeholder="Name, generic or barcode"
+                 role="combobox" aria-expanded="false" aria-controls="product-results" aria-autocomplete="list" autofocus>
+          <div class="search-results d-none" id="product-results" role="listbox"></div>
+        </div>
+        <div class="table-wrap mt-3">
+          <table class="table align-middle" aria-live="polite">
+            <thead><tr><th>Item</th><th class="num">MRP (₹)</th><th>Qty</th><th class="num">Amount (₹)</th><th></th></tr></thead>
+            <tbody id="cart-body"></tbody>
+          </table>
+          <p class="text-body-secondary small mt-2 mb-0" id="cart-empty">No items yet.</p>
+        </div>
+      </div>
+
+      <div class="panel d-none" id="rx-panel">
+        <h2><i class="bi bi-journal-medical" aria-hidden="true"></i> Prescription details</h2>
+        <p class="small text-body-secondary">Needed for Schedule H, H1, X and NDPS drugs (Drugs Rules, Rule 65). Enter a portal prescription number to fill these in.</p>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label" for="pres_id">Prescription no. <span class="text-body-secondary small">(optional)</span></label>
+            <input class="form-control" id="pres_id" name="pres_id" inputmode="numeric" value="{{ form.get('pres_id', '') }}">
+          </div>
+          <div class="col-md-8">
+            <label class="form-label" for="pharmacist_id">Dispensing pharmacist</label>
+            <select class="form-select" id="pharmacist_id" name="pharmacist_id">
+              {% for p in pharmacists %}
+                <option value="{{ p.e_id }}" {% if form.get('pharmacist_id') == p.e_id|string or (not form.get('pharmacist_id') and p.e_id == g.user.e_id) %}selected{% endif %}>{{ p.name }} (reg. {{ p.pharmacist_reg_no }})</option>
+              {% else %}<option value="">No pharmacist registered — add one under Staff</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6"><label class="form-label" for="patient_name">Patient name</label>
+            <input class="form-control" id="patient_name" name="patient_name" maxlength="100" value="{{ form.get('patient_name', '') }}"></div>
+          <div class="col-md-6"><label class="form-label" for="patient_address">Patient address</label>
+            <input class="form-control" id="patient_address" name="patient_address" maxlength="500" value="{{ form.get('patient_address', '') }}"></div>
+          <div class="col-md-4"><label class="form-label" for="prescriber_name">Doctor's name</label>
+            <input class="form-control" id="prescriber_name" name="prescriber_name" maxlength="100" value="{{ form.get('prescriber_name', '') }}"></div>
+          <div class="col-md-3"><label class="form-label" for="prescriber_reg_no">Doctor's reg. no.</label>
+            <input class="form-control" id="prescriber_reg_no" name="prescriber_reg_no" maxlength="50" value="{{ form.get('prescriber_reg_no', '') }}"></div>
+          <div class="col-md-5"><label class="form-label" for="prescriber_address">Doctor's address</label>
+            <input class="form-control" id="prescriber_address" name="prescriber_address" maxlength="500" value="{{ form.get('prescriber_address', '') }}"></div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel">
+      <div class="position-relative mb-3">
+        <label class="form-label" for="customer-search">Customer <span class="text-body-secondary small">(optional)</span></label>
+        <input type="hidden" name="c_id" id="c_id" value="{{ form.get('c_id', '') }}">
+        <div class="d-flex gap-2 {{ '' if form.get('c_id') else 'd-none' }}" id="customer-chosen">
+          <span class="form-control text-truncate" id="customer-label">{{ form.get('customer_label', 'Customer #' ~ form.get('c_id', '')) }}</span>
+          <input type="hidden" name="customer_label" id="customer_label_input" value="{{ form.get('customer_label', '') }}">
+          <button class="btn btn-outline-secondary" type="button" id="customer-clear" aria-label="Remove customer"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+        </div>
+        <input class="form-control {{ 'd-none' if form.get('c_id') }}" id="customer-search" type="search" placeholder="Phone, name or ID"
+               role="combobox" aria-expanded="false" aria-controls="customer-results">
+        <div class="search-results d-none" id="customer-results" role="listbox"></div>
+      </div>
+
+      <fieldset class="mb-3">
+        <legend class="form-label fs-6">Payment</legend>
+        <div class="btn-group w-100" role="group">
+          {% for m in modes %}
+            <input type="radio" class="btn-check" name="payment_mode" id="pay-{{ m }}" value="{{ m }}" {% if form.get('payment_mode', 'Cash') == m %}checked{% endif %}>
+            <label class="btn btn-outline-secondary" for="pay-{{ m }}">{{ m }}</label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <div class="row g-2 mb-3">
+        <div class="col-6"><label class="form-label" for="discount_pct">Discount %</label>
+          <input class="form-control" id="discount_pct" name="discount_pct" type="number" min="0" max="100" step="0.5" value="{{ form.get('discount_pct', '0') }}"></div>
+        <div class="col-6"><label class="form-label" for="buyer_gstin">Buyer GSTIN</label>
+          <input class="form-control" id="buyer_gstin" name="buyer_gstin" maxlength="15" placeholder="B2B only" value="{{ form.get('buyer_gstin', '') }}"></div>
+      </div>
+
+      <dl class="totals row mb-2">
+        <dt class="col-6">Items</dt><dd class="col-6" id="t-items">0</dd>
+        <dt class="col-6">MRP total</dt><dd class="col-6" id="t-gross">0.00</dd>
+        <dt class="col-6">Discount</dt><dd class="col-6" id="t-disc">0.00</dd>
+        <dt class="col-6">GST included</dt><dd class="col-6" id="t-gst">0.00</dd>
+      </dl>
+      <div class="d-flex justify-content-between align-items-baseline border-top pt-2 mb-3">
+        <span class="text-body-secondary">To pay</span><span class="grand">₹<span id="t-total">0</span></span>
+      </div>
+      <button class="btn btn-primary btn-lg w-100" type="submit" id="save-bill" disabled>Save and print</button>
+      <p class="small text-body-secondary mt-2 mb-0">The server recalculates every amount from the stock records before saving.</p>
+    </aside>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/counter.js') }}"></script>{% endblock %}

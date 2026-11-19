@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, csrf, schedule_badge %}
+{% block title %}Products{% endblock %}
+{% block content %}
+{% call page_header("Products", "Everything the store sells, with schedule, HSN and GST rate.") %}
+  <a class="btn btn-primary" href="{{ url_for('staff.product_form') }}"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add product</a>
+{% endcall %}
+<form class="mb-3" method="get" role="search">
+  <label class="visually-hidden" for="q">Search products</label>
+  <input class="form-control" id="q" name="q" value="{{ q }}" placeholder="Search by brand, generic name or barcode">
+</form>
+<div class="panel table-wrap">
+  <table class="table align-middle">
+    <thead><tr><th>Product</th><th>Generic</th><th>Schedule</th><th>HSN</th><th class="num">GST</th><th class="num">MRP (₹)</th><th class="num">In stock</th><th></th></tr></thead>
+    <tbody>
+    {% for p in products %}
+      {% set qty = stock.get(p.p_id) or 0 %}
+      <tr class="{{ 'text-body-secondary' if not p.is_active }}">
+        <td><a href="{{ url_for('staff.product_form', p_id=p.p_id) }}">{{ p.brand_name }} {{ p.strength }}</a>
+          <div class="small text-body-secondary">{{ p.form }} · {{ p.packing }}</div></td>
+        <td>{{ p.medicine_name }}</td>
+        <td>{{ schedule_badge(p.schedule) }}</td>
+        <td>{{ p.hsn_code }}</td>
+        <td class="num">{{ p.gst_rate|int }}%</td>
+        <td class="num">{{ p.mrp|inr }}</td>
+        <td class="num {{ 'text-warn' if qty <= p.reorder_level }}">{{ qty }}</td>
+        <td class="text-end">
+          {% if g.user.is_admin %}
+          <form method="post" action="{{ url_for('staff.product_toggle', p_id=p.p_id) }}">
+            {{ csrf() }}<button class="btn btn-sm btn-outline-secondary" type="submit">{{ "Discontinue" if p.is_active else "Restore" }}</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="8" class="text-body-secondary">No products match.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  {% block meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+  <title>{% block title %}{% endblock %} · {{ pharmacy.name if pharmacy else "Pharmacy" }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="{% block body_class %}{% endblock %}" {% block body_attrs %}{% endblock %}>
+<a class="visually-hidden-focusable skip-link" href="#main">Skip to content</a>
+
+{% if g.user_kind == "staff" %}
+<div class="app-shell">
+  <nav class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="Main">
+    <div class="offcanvas-header d-lg-none">
+      <span class="brand">{{ pharmacy.name }}</span>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Close menu"></button>
+    </div>
+    <div class="offcanvas-body flex-column">
+      <a class="brand d-none d-lg-flex" href="{{ url_for('staff.dashboard') }}"><i class="bi bi-capsule" aria-hidden="true"></i><span>{{ pharmacy.name }}</span></a>
+      {% set ep = request.endpoint or "" %}
+      {% macro nav(endpoint, icon, label, prefix=None) -%}
+        <a class="nav-item{{ ' active' if ep == endpoint or (prefix and ep.startswith(prefix)) }}" href="{{ url_for(endpoint) }}"
+           {% if ep == endpoint %}aria-current="page"{% endif %}><i class="bi bi-{{ icon }}" aria-hidden="true"></i>{{ label }}</a>
+      {%- endmacro %}
+      <a class="btn btn-primary w-100 mb-3" href="{{ url_for('sales.counter') }}"><i class="bi bi-receipt" aria-hidden="true"></i> New bill</a>
+      {{ nav('staff.dashboard', 'speedometer2', 'Dashboard') }}
+      {{ nav('sales.history', 'clock-history', 'Sales') }}
+      {{ nav('staff.prescriptions', 'file-medical', 'Prescriptions') }}
+      <div class="nav-label">Stock</div>
+      {{ nav('inventory.stock', 'box-seam', 'Batches') }}
+      {{ nav('inventory.purchases', 'truck', 'Purchases') }}
+      {{ nav('inventory.reorder', 'cart-plus', 'Reorder list') }}
+      {{ nav('staff.products', 'capsule-pill', 'Products') }}
+      {{ nav('staff.suppliers', 'building', 'Suppliers') }}
+      <div class="nav-label">People</div>
+      {{ nav('staff.customers', 'people', 'Customers') }}
+      {% if g.user.is_admin %}{{ nav('staff.employees', 'person-badge', 'Staff') }}{% endif %}
+      <div class="nav-label">Records</div>
+      {{ nav('reports.overview', 'graph-up', 'Stock & sales') }}
+      {{ nav('reports.register', 'journal-medical', 'Drug registers') }}
+      {{ nav('reports.gst', 'percent', 'GST returns') }}
+      {% if g.user.is_admin %}
+        {{ nav('reports.audit_log', 'shield-check', 'Audit log') }}
+        {{ nav('staff.settings', 'gear', 'Settings') }}
+      {% endif %}
+      <div class="mt-auto pt-3 border-top border-secondary-subtle small">
+        <div class="text-body-secondary">Signed in as</div>
+        <div class="fw-semibold">{{ g.user.name }}</div>
+        <div class="d-flex gap-2 mt-2">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('auth.change_password') }}">Password</a>
+          <form method="post" action="{{ url_for('auth.logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline-secondary" type="submit">Sign out</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="content">
+    <header class="topbar d-lg-none">
+      <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Open menu"><i class="bi bi-list" aria-hidden="true"></i></button>
+      <span class="fw-semibold">{{ pharmacy.name }}</span>
+    </header>
+    <main id="main" class="page">
+      {% include "_flash.html" %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% else %}
+<header class="public-bar">
+  <div class="container d-flex align-items-center justify-content-between gap-3 flex-wrap">
+    <a class="brand" href="{{ url_for('public.index') }}"><i class="bi bi-capsule" aria-hidden="true"></i><span>{{ pharmacy.name if pharmacy else "Pharmacy" }}</span></a>
+    <nav class="d-flex gap-2 align-items-center" aria-label="Account">
+      {% if g.user_kind == "customer" %}
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('portal.home') }}">My prescriptions</a>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('auth.change_password') }}">Password</a>
+        <form method="post" action="{{ url_for('auth.logout') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-outline-secondary" type="submit">Sign out</button>
+        </form>
+      {% else %}
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('auth.customer_login') }}">Customer sign in</a>
+        <a class="btn btn-sm btn-primary" href="{{ url_for('auth.staff_login') }}">Staff sign in</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+<main id="main" class="container py-4">
+  {% include "_flash.html" %}
+  {% block public_content %}{% endblock %}
+</main>
+<footer class="container py-4 small text-body-secondary d-flex flex-wrap gap-3 justify-content-between">
+  <span>{% if pharmacy and pharmacy.licence_20 %}Drug licence {{ pharmacy.licence_20 }}{% endif %}{% if pharmacy and pharmacy.gstin %} · GSTIN {{ pharmacy.gstin }}{% endif %}</span>
+  <a href="{{ url_for('public.privacy') }}">Privacy notice</a>
+</footer>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

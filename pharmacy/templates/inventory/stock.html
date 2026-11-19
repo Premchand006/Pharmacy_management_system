@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, csrf, schedule_badge %}
+{% block title %}Batches{% endblock %}
+{% block content %}
+{% call page_header("Batches in stock", "Billing always takes the batch that expires first.") %}
+  <a class="btn btn-primary" href="{{ url_for('inventory.purchase_new') }}"><i class="bi bi-truck" aria-hidden="true"></i> Receive stock</a>
+{% endcall %}
+<form class="row g-2 mb-3" method="get" role="search">
+  <div class="col-md-6"><label class="visually-hidden" for="q">Search</label>
+    <input class="form-control" id="q" name="q" value="{{ q }}" placeholder="Product or batch number"></div>
+  <div class="col-auto">
+    <label class="visually-hidden" for="show">Show</label>
+    <select class="form-select" id="show" name="show">
+      <option value="all" {% if show == "all" %}selected{% endif %}>All batches</option>
+      <option value="expiring" {% if show == "expiring" %}selected{% endif %}>Expiring in 90 days</option>
+      <option value="expired" {% if show == "expired" %}selected{% endif %}>Expired, still on shelf</option>
+    </select>
+  </div>
+  <div class="col-auto"><button class="btn btn-outline-secondary" type="submit">Filter</button></div>
+</form>
+<div class="panel table-wrap">
+  <table class="table align-middle">
+    <thead><tr><th>Product</th><th>Batch</th><th>Expiry</th><th>Supplier</th><th class="num">MRP (₹)</th><th class="num">Units</th><th>Remove stock</th></tr></thead>
+    <tbody>
+    {% for b in batches %}
+      {% set days = (b.expiry_date - today).days %}
+      <tr>
+        <td>{{ b.product.label }} {{ schedule_badge(b.product.schedule) }}</td>
+        <td>{{ b.batch_no }}</td>
+        <td class="{{ 'text-bad' if days < 0 else ('text-warn' if days <= 30) }}">{{ b.expiry_date.strftime("%b %Y") }}
+          <div class="small">{% if days < 0 %}expired{% else %}{{ days }} days left{% endif %}</div></td>
+        <td>{{ b.supplier.firm_name }}</td>
+        <td class="num">{{ b.mrp|inr }}</td>
+        <td class="num">{{ b.qty_available }}</td>
+        <td>
+          <form method="post" action="{{ url_for('inventory.adjust', b_id=b.b_id) }}" class="d-flex gap-1 flex-wrap"
+                data-confirm="Remove this stock? It will be recorded in the audit log.">
+            {{ csrf() }}
+            <label class="visually-hidden" for="qty-{{ b.b_id }}">Units to remove</label>
+            <input class="form-control form-control-sm" style="width: 5rem" id="qty-{{ b.b_id }}" name="qty" type="number" min="1" max="{{ b.qty_available }}" value="{{ b.qty_available if days < 0 else 1 }}" required>
+            <label class="visually-hidden" for="reason-{{ b.b_id }}">Reason</label>
+            <select class="form-select form-select-sm" style="width: auto" id="reason-{{ b.b_id }}" name="reason">
+              {% for r in reasons %}<option {% if days < 0 and loop.first %}selected{% endif %}>{{ r }}</option>{% endfor %}
+            </select>
+            <button class="btn btn-sm btn-outline-secondary" type="submit">Remove</button>
+          </form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="text-body-secondary">No batches match.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

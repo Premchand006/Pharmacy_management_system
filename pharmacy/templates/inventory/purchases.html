@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header %}
+{% block title %}Purchases{% endblock %}
+{% block content %}
+{% call page_header("Purchases", "Supplier invoices received at the store.") %}
+  <a class="btn btn-outline-secondary" href="{{ url_for('reports.purchase_register') }}">Purchase register</a>
+  <a class="btn btn-primary" href="{{ url_for('inventory.purchase_new') }}"><i class="bi bi-truck" aria-hidden="true"></i> Receive stock</a>
+{% endcall %}
+<div class="panel table-wrap">
+  <table class="table align-middle">
+    <thead><tr><th>Received</th><th>Supplier</th><th>Their invoice</th><th class="num">Batches</th><th class="num">Cost (₹)</th><th>By</th></tr></thead>
+    <tbody>
+    {% for p in purchases %}
+      <tr>
+        <td>{{ p.received_on.strftime("%d %b %Y") }}</td>
+        <td>{{ p.supplier.firm_name }}</td>
+        <td><a href="{{ url_for('inventory.purchase', purchase_id=p.purchase_id) }}">{{ p.supplier_invoice_no }}</a></td>
+        <td class="num">{{ p.batches|length }}</td>
+        <td class="num">{{ p.total_cost|inr }}</td>
+        <td>{{ p.received_by.name if p.received_by else "" }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="text-body-secondary">Nothing received yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% macro csrf() -%}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{%- endmacro %}
+
+{% macro field(name, label, value="", type="text", required=False, help=None, col="col-md-6") -%}
+  <div class="{{ col }}">
+    <label class="form-label" for="f-{{ name }}">{{ label }}{% if not required %} <span class="text-body-secondary small">(optional)</span>{% endif %}</label>
+    <input class="form-control" id="f-{{ name }}" name="{{ name }}" type="{{ type }}"
+           value="{{ request.form.get(name, value if value is not none else '') }}"
+           {% if required %}required{% endif %}
+           {% if help %}aria-describedby="h-{{ name }}"{% endif %}
+           {% for k, v in kwargs.items() %} {{ k }}="{{ v }}"{% endfor %}>
+    {% if help %}<div class="form-text" id="h-{{ name }}">{{ help }}</div>{% endif %}
+  </div>
+{%- endmacro %}
+
+{% macro textarea(name, label, value="", required=False, rows=2, col="col-12", help=None) -%}
+  <div class="{{ col }}">
+    <label class="form-label" for="f-{{ name }}">{{ label }}{% if not required %} <span class="text-body-secondary small">(optional)</span>{% endif %}</label>
+    <textarea class="form-control" id="f-{{ name }}" name="{{ name }}" rows="{{ rows }}" {% if required %}required{% endif %}>{{ request.form.get(name, value or '') }}</textarea>
+    {% if help %}<div class="form-text">{{ help }}</div>{% endif %}
+  </div>
+{%- endmacro %}
+
+{% macro select(name, label, options, selected="", required=True, col="col-md-6", help=None) -%}
+  {% set current = request.form.get(name, selected|string) %}
+  <div class="{{ col }}">
+    <label class="form-label" for="f-{{ name }}">{{ label }}</label>
+    <select class="form-select" id="f-{{ name }}" name="{{ name }}" {% if required %}required{% endif %}>
+      {% if not required %}<option value="">—</option>{% endif %}
+      {% for value, text in options %}
+        <option value="{{ value }}" {% if value|string == current %}selected{% endif %}>{{ text }}</option>
+      {% endfor %}
+    </select>
+    {% if help %}<div class="form-text">{{ help }}</div>{% endif %}
+  </div>
+{%- endmacro %}
+
+{% macro schedule_badge(code) -%}
+  <span class="badge sched sched-{{ code|lower }}" title="{{ SCHEDULES.get(code, code) }}">{{ 'OTC' if code == 'OTC' else code }}</span>
+{%- endmacro %}
+
+{% macro page_header(title, subtitle=None) -%}
+  <div class="page-header">
+    <div>
+      <h1>{{ title }}</h1>
+      {% if subtitle %}<p class="text-body-secondary mb-0">{{ subtitle }}</p>{% endif %}
+    </div>
+    <div class="d-flex flex-wrap gap-2">{{ caller() if caller }}</div>
+  </div>
+{%- endmacro %}
+
+{% macro date_range(start, end, extra=None) -%}
+  <form class="row g-2 align-items-end mb-3" method="get">
+    <div class="col-auto"><label class="form-label small" for="from">From</label><input class="form-control" id="from" type="date" name="from" value="{{ start }}"></div>
+    <div class="col-auto"><label class="form-label small" for="to">To</label><input class="form-control" id="to" type="date" name="to" value="{{ end }}"></div>
+    {{ caller() if caller }}
+    <div class="col-auto"><button class="btn btn-outline-secondary" type="submit">Show</button></div>
+  </form>
+{%- endmacro %}

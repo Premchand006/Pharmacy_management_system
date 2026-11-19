@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header %}
+{% block title %}Purchase {{ purchase.supplier_invoice_no }}{% endblock %}
+{% block content %}
+{{ page_header("Supplier invoice " ~ purchase.supplier_invoice_no,
+               purchase.supplier.firm_name ~ " · licence " ~ purchase.supplier.drug_licence ~ " · dated " ~ purchase.invoice_date.strftime("%d %b %Y")) }}
+<div class="panel table-wrap">
+  <table class="table align-middle">
+    <thead><tr><th>Product</th><th>Batch</th><th>Expiry</th><th>Manufacturer</th><th class="num">Qty</th><th class="num">Cost (₹)</th><th class="num">MRP (₹)</th></tr></thead>
+    <tbody>
+    {% for b in purchase.batches %}
+      <tr><td>{{ b.product.label }}</td><td>{{ b.batch_no }}</td><td>{{ b.expiry_date.strftime("%b %Y") }}</td>
+        <td>{{ b.manufacturer_name }}</td><td class="num">{{ b.qty_received }}</td><td class="num">{{ b.cost_price|inr }}</td><td class="num">{{ b.mrp|inr }}</td></tr>
+    {% endfor %}
+    </tbody>
+    <tfoot><tr><th colspan="5">Total cost</th><th class="num">{{ purchase.total_cost|inr }}</th><th></th></tr></tfoot>
+  </table>
+</div>
+<p class="small text-body-secondary mt-2">Received {{ purchase.received_on.strftime("%d %b %Y") }}{% if purchase.received_by %} by {{ purchase.received_by.name }}{% endif %}.</p>
+{% endblock %}

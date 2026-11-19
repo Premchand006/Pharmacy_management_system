@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, csrf, field, textarea %}
+{% block title %}{{ sup.firm_name or "New supplier" }}{% endblock %}
+{% block content %}
+{{ page_header(sup.firm_name or "New supplier") }}
+<form method="post" class="panel">
+  {{ csrf() }}
+  <div class="row g-3">
+    {{ field("firm_name", "Firm name", sup.firm_name, required=True, maxlength=100) }}
+    {{ field("owner_name", "Contact person", sup.owner_name, maxlength=100) }}
+    {{ field("drug_licence", "Wholesale drug licence no.", sup.drug_licence, required=True, maxlength=60, help="Form 20B / 21B. Printed on their invoice.") }}
+    {{ field("licence_valid_until", "Licence valid until", sup.licence_valid_until, type="date", help="You'll get a dashboard warning 30 days before.") }}
+    {{ field("gstin", "GSTIN", sup.gstin, maxlength=15, pattern="[0-9A-Za-z]{15}") }}
+    {{ field("phone", "Phone", sup.phone, type="tel", maxlength=20) }}
+    {{ textarea("address", "Address", sup.address) }}
+  </div>
+  <div class="d-flex gap-2 mt-4">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('staff.suppliers') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

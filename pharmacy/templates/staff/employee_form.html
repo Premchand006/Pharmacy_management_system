@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, csrf, field, select %}
+{% block title %}{{ emp.name or "New staff member" }}{% endblock %}
+{% block content %}
+{{ page_header(emp.name or "New staff member") }}
+<form method="post" class="panel">
+  {{ csrf() }}
+  <div class="row g-3">
+    {{ field("name", "Full name", emp.name, required=True, maxlength=100) }}
+    {{ field("role", "Job title", emp.role, required=True, maxlength=50, placeholder="Pharmacist, Counter assistant…") }}
+    {{ field("phone", "Phone", emp.phone, type="tel", maxlength=20) }}
+    {{ select("work_shift", "Shift", [("Morning","Morning"),("Evening","Evening"),("Night","Night"),("General","General")], emp.work_shift or "General") }}
+    {{ field("salary", "Monthly salary (₹)", emp.salary, type="number", required=True, min=0, step="0.01") }}
+    {{ field("experience", "Experience (years)", emp.experience if emp.experience is not none else 0, type="number", required=True, min=0, max=60) }}
+    {{ field("pharmacist_reg_no", "Pharmacist registration no.", emp.pharmacist_reg_no, maxlength=50,
+             help="Needed to sign for Schedule H, H1 and X sales.") }}
+  </div>
+  <h2 class="mt-4">Sign-in</h2>
+  <div class="row g-3">
+    {{ field("username", "Username", emp.username, maxlength=50, autocomplete="off", help="Leave empty if this person does not use the system.") }}
+    <div class="col-md-6">
+      <label class="form-label" for="f-password">{{ "New password" if emp.password_hash else "Password" }} <span class="text-body-secondary small">(optional)</span></label>
+      <input class="form-control" id="f-password" name="password" type="password" autocomplete="new-password" minlength="12">
+      <div class="form-text">At least 12 characters. Setting a new one signs them out everywhere.</div>
+    </div>
+    {{ select("access", "Access", [("staff","Staff: billing, stock, reports"),("admin","Admin: also staff, settings and audit log")], emp.access or "staff") }}
+  </div>
+  <div class="d-flex gap-2 mt-4">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('staff.employees') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

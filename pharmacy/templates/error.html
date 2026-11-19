@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% macro body() %}
+  <div class="panel text-center mx-auto my-5" style="max-width: 520px">
+    <div class="display-5 fw-bold text-body-secondary">{{ code }}</div>
+    <h1 class="h4 mt-2">{{ title }}</h1>
+    <p class="text-body-secondary">{{ message }}</p>
+    <a class="btn btn-primary" href="{{ url_for('public.index') }}">Go to the start page</a>
+  </div>
+{% endmacro %}
+{% block content %}{{ body() }}{% endblock %}
+{% block public_content %}{{ body() }}{% endblock %}

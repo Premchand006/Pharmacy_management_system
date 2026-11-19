@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header %}
+{% block title %}Trace a batch{% endblock %}
+{% block content %}
+{{ page_header("Trace a batch", "Find who supplied a batch and every bill and prescription it went out on. Use this for a recall.") }}
+<form class="row g-2 mb-3" method="get" role="search">
+  <div class="col-md-4"><label class="visually-hidden" for="batch">Batch number</label>
+    <input class="form-control" id="batch" name="batch" value="{{ batch_no }}" placeholder="Batch number" required></div>
+  <div class="col-auto"><button class="btn btn-primary" type="submit">Trace</button></div>
+</form>
+{% if batch_no and not batches %}<p class="text-body-secondary">No batch with that number.</p>{% endif %}
+{% for b in batches %}
+<div class="panel table-wrap">
+  <h2>{{ b.product.label }} · batch {{ b.batch_no }}</h2>
+  <p class="text-body-secondary">From {{ b.supplier.firm_name }} (licence {{ b.supplier.drug_licence }}),
+    {% if b.purchase %}invoice <a href="{{ url_for('inventory.purchase', purchase_id=b.purchase_id) }}">{{ b.purchase.supplier_invoice_no }}</a>,{% endif %}
+    received {{ b.received_on.strftime("%d %b %Y") }}. Made by {{ b.manufacturer_name or "—" }}, expires {{ b.expiry_date.strftime("%d %b %Y") }}.
+    {{ b.qty_received }} received, {{ b.qty_available }} left.</p>
+  <table class="table table-sm align-middle">
+    <thead><tr><th>Invoice</th><th>Date</th><th>Patient</th><th>Phone</th><th>Prescription</th><th class="num">Qty</th></tr></thead>
+    <tbody>
+    {% for i in b.sale_items %}
+      <tr class="{{ 'text-body-secondary' if i.sale.status == 'void' }}">
+        <td><a href="{{ url_for('sales.invoice', sb_id=i.sale_id) }}">{{ i.sale.invoice_no }}</a>{% if i.sale.status == "void" %} (void){% endif %}</td>
+        <td>{{ i.sale.sold_at|local("%d %b %Y") }}</td>
+        <td>{{ i.sale.patient_name or "Walk-in" }}</td>
+        <td>{{ i.sale.customer.phone if i.sale.customer else "" }}</td>
+        <td>{% if i.sale.pres_id %}<a href="{{ url_for('staff.prescription', pres_id=i.sale.pres_id) }}">#{{ i.sale.pres_id }}</a>{% endif %}</td>
+        <td class="num">{{ i.qty }}</td>
+      </tr>
+    {% else %}<tr><td colspan="6" class="text-body-secondary">Not sold yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endfor %}
+{% endblock %}

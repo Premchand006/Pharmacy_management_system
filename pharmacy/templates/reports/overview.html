@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header %}
+{% block title %}Stock and sales{% endblock %}
+{% block content %}
+{% call page_header("Stock and sales") %}
+  <a class="btn btn-outline-secondary" href="{{ url_for('reports.trace') }}">Trace a batch</a>
+  <a class="btn btn-outline-secondary" href="{{ url_for('reports.overview', format='csv') }}"><i class="bi bi-download" aria-hidden="true"></i> Stock CSV</a>
+{% endcall %}
+<div class="row g-3">
+  <div class="col-xl-7">
+    <div class="panel table-wrap">
+      <h2>Current stock (unexpired)</h2>
+      <table class="table table-sm align-middle">
+        <thead><tr><th>Product</th><th>Generic</th><th class="num">Units</th><th>Nearest expiry</th></tr></thead>
+        <tbody>
+        {% for r in stock %}
+          <tr><td>{{ r.brand_name }} {{ r.strength }}</td><td>{{ r.medicine_name }}</td>
+            <td class="num {{ 'text-bad' if not r.qty }}">{{ r.qty }}</td><td>{{ r.nearest.strftime("%b %Y") if r.nearest else "—" }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-xl-5">
+    <div class="panel table-wrap">
+      <h2>Expiring within 30 days</h2>
+      <table class="table table-sm align-middle">
+        <thead><tr><th>Product</th><th>Batch</th><th>Expiry</th><th class="num">Units</th></tr></thead>
+        <tbody>
+        {% for b in near %}
+          <tr><td>{{ b.product.label }}</td><td>{{ b.batch_no }}</td><td class="text-warn">{{ b.expiry_date.strftime("%d %b %Y") }}</td><td class="num">{{ b.qty_available }}</td></tr>
+        {% else %}<tr><td colspan="4" class="text-body-secondary">Nothing expiring soon.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="panel table-wrap">
+      <h2>Top sellers, last 90 days</h2>
+      <table class="table table-sm align-middle">
+        <thead><tr><th>Item</th><th class="num">Units</th><th class="num">Value (₹)</th></tr></thead>
+        <tbody>
+        {% for t in top %}
+          <tr><td>{{ t.item_name }}</td><td class="num">{{ t.qty }}</td><td class="num">{{ t.value|inr }}</td></tr>
+        {% else %}<tr><td colspan="3" class="text-body-secondary">No sales yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

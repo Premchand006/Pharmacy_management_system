@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block meta %}
+<meta name="description" content="{{ pharmacy.name }}: prescriptions, stock and billing for the pharmacy counter.">
+<link rel="canonical" href="{{ url_for('public.index', _external=True) }}">
+<meta property="og:title" content="{{ pharmacy.name }}">
+<meta property="og:description" content="Check your prescriptions and past bills online.">
+{% endblock %}
+{% block title %}Welcome{% endblock %}
+{% block public_content %}
+<section class="hero row g-4 align-items-center py-lg-5">
+  <div class="col-lg-7">
+    <h1>Your prescriptions and bills, in one place.</h1>
+    <p class="mt-3">Customers can see every prescription and purchase made at {{ pharmacy.name }}, and send a new
+      prescription before they visit. Staff sign in to bill, manage stock and keep the drug registers.</p>
+  </div>
+  <div class="col-lg-5">
+    <div class="panel">
+      <h2>Customers</h2>
+      <p class="text-body-secondary">Sign in with the Customer ID printed on your bill and the password the pharmacy gave you.</p>
+      <a class="btn btn-primary w-100" href="{{ url_for('auth.customer_login') }}">Customer sign in</a>
+    </div>
+    <div class="panel">
+      <h2>Pharmacy staff</h2>
+      <p class="text-body-secondary">Billing counter, stock, purchases, registers and GST reports.</p>
+      <a class="btn btn-outline-secondary w-100" href="{{ url_for('auth.staff_login') }}">Staff sign in</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

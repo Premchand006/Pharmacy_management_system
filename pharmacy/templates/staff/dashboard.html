@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+{% call page_header("Good to see you, " ~ g.user.name.split()[0], today.strftime("%A, %d %B %Y")) %}
+  <a class="btn btn-primary" href="{{ url_for('sales.counter') }}"><i class="bi bi-receipt" aria-hidden="true"></i> New bill</a>
+  <a class="btn btn-outline-secondary" href="{{ url_for('inventory.purchase_new') }}"><i class="bi bi-truck" aria-hidden="true"></i> Receive stock</a>
+{% endcall %}
+
+{% for w in warnings %}
+  <div class="alert alert-warning" role="status"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i> {{ w }}</div>
+{% endfor %}
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-xl-2"><a class="stat" href="{{ url_for('sales.history') }}"><div class="label">Bills today</div><div class="value">{{ stats.sales_today }}</div></a></div>
+  <div class="col-6 col-xl-2"><a class="stat" href="{{ url_for('sales.history') }}"><div class="label">Takings today</div><div class="value">₹{{ stats.revenue_today|inr }}</div></a></div>
+  <div class="col-6 col-xl-2"><a class="stat {{ 'warn' if stats.near_expiry }}" href="{{ url_for('inventory.stock', show='expiring') }}"><div class="label">Batches expiring in 30 days</div><div class="value">{{ stats.near_expiry }}</div></a></div>
+  <div class="col-6 col-xl-2"><a class="stat {{ 'bad' if stats.expired }}" href="{{ url_for('inventory.stock', show='expired') }}"><div class="label">Expired batches on shelf</div><div class="value">{{ stats.expired }}</div></a></div>
+  <div class="col-6 col-xl-2"><a class="stat {{ 'warn' if stats.reorder }}" href="{{ url_for('inventory.reorder') }}"><div class="label">Products to reorder</div><div class="value">{{ stats.reorder }}</div></a></div>
+  <div class="col-6 col-xl-2"><a class="stat" href="{{ url_for('staff.products') }}"><div class="label">Products on sale</div><div class="value">{{ stats.products }}</div></a></div>
+</div>
+
+<div class="panel">
+  <h2>Latest bills</h2>
+  {% if recent %}
+  <div class="table-wrap"><table class="table align-middle">
+    <thead><tr><th>Invoice</th><th>Time</th><th>Customer</th><th>Payment</th><th class="num">Total (₹)</th><th></th></tr></thead>
+    <tbody>
+    {% for s in recent %}
+      <tr>
+        <td><a href="{{ url_for('sales.invoice', sb_id=s.sb_id) }}">{{ s.invoice_no }}</a></td>
+        <td>{{ s.sold_at|local }}</td>
+        <td>{{ s.patient_name or "Walk-in" }}</td>
+        <td>{{ s.payment_mode }}</td>
+        <td class="num">{{ s.total|inr }}</td>
+        <td>{% if s.status == "void" %}<span class="badge text-bg-danger">Void</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}
+  <p class="text-body-secondary mb-0">No bills yet. <a href="{{ url_for('sales.counter') }}">Make the first one.</a></p>
+  {% endif %}
+</div>
+{% endblock %}

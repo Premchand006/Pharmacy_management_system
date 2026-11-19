@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block meta %}<meta name="description" content="How {{ pharmacy.name }} uses customer data.">{% endblock %}
+{% block title %}Privacy notice{% endblock %}
+{% block public_content %}
+<article class="panel" style="max-width: 760px">
+  <h1 class="h3">Privacy notice</h1>
+  <p class="text-body-secondary">This is a template. The pharmacy should review it, fill in the contact details and
+    check it against the Digital Personal Data Protection Act, 2023 and its Rules before relying on it.</p>
+
+  <h2>What we collect</h2>
+  <p>Your name, phone number and address, the prescriptions you show us, and what you buy. Age and gender are
+    optional.</p>
+
+  <h2>Why</h2>
+  <ul>
+    <li>To dispense medicines safely and keep the prescription records the Drugs Rules, 1945 require.</li>
+    <li>To issue GST invoices and keep tax records as the GST law requires.</li>
+    <li>To let you see your prescriptions and bills in this portal.</li>
+  </ul>
+  <p>We do not use your data for marketing and do not sell it.</p>
+
+  <h2>How long we keep it</h2>
+  <p>Invoices are kept for at least six years and prescription registers for at least three, because the law
+    requires it. You can ask us to close your portal account at any time. We then erase your profile, but must keep
+    the copies of your details that appear on past invoices and registers until the legal period ends.</p>
+
+  <h2>Your rights</h2>
+  <p>You can ask to see, correct or erase your data, or complain, by contacting
+    {{ pharmacy.name }}{% if pharmacy.email %} at <a href="mailto:{{ pharmacy.email }}">{{ pharmacy.email }}</a>{% endif %}{% if pharmacy.phone %} or {{ pharmacy.phone }}{% endif %}.
+    We reply within 90 days. If you are not satisfied you can complain to the Data Protection Board of India.</p>
+
+  <h2>Security</h2>
+  <p>Access is limited to pharmacy staff with their own logins, every change is logged, and connections are
+    encrypted.</p>
+</article>
+{% endblock %}

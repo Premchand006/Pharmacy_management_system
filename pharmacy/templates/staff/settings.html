@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, csrf, field, textarea %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+{{ page_header("Pharmacy settings", "Printed on every invoice. Required by GST Rule 46 and Drugs Rules, Rule 65.") }}
+<form method="post" class="panel">
+  {{ csrf() }}
+  <div class="row g-3">
+    {{ field("name", "Pharmacy name", s.name, required=True, maxlength=120) }}
+    {{ field("phone", "Phone", s.phone, type="tel", maxlength=30) }}
+    {{ textarea("address", "Address", s.address, required=True) }}
+    {{ field("email", "Email for privacy requests", s.email, type="email", maxlength=120) }}
+    {{ field("gstin", "GSTIN", s.gstin, maxlength=15, pattern="[0-9A-Za-z]{15}", help="The first two digits set the state code.") }}
+  </div>
+  <h2 class="mt-4">Drug licences</h2>
+  <div class="row g-3">
+    {{ field("licence_20", "Form 20 (retail, other than Schedule C/X)", s.licence_20, maxlength=60, col="col-md-4") }}
+    {{ field("licence_21", "Form 21 (retail, Schedule C/C1)", s.licence_21, maxlength=60, col="col-md-4") }}
+    {{ field("licence_20f", "Form 20F (retail, Schedule X)", s.licence_20f, maxlength=60, col="col-md-4", help="Without it the counter refuses Schedule X sales.") }}
+    {{ field("licence_fee_due", "Next licence retention fee due", s.licence_fee_due, type="date", col="col-md-4", help="Paid every five years (Rule 63).") }}
+  </div>
+  <h2 class="mt-4">Invoices</h2>
+  <div class="row g-3">
+    {{ field("invoice_prefix", "Invoice number prefix", s.invoice_prefix, required=True, maxlength=8, pattern="[A-Za-z0-9]+", col="col-md-4",
+             help="Invoices read PREFIX/2026-27/00001 and restart each financial year.") }}
+    <div class="col-md-8 d-flex align-items-center">
+      <div class="form-check mt-3">
+        <input class="form-check-input" type="checkbox" id="composition_scheme" name="composition_scheme" {% if s.composition_scheme %}checked{% endif %}>
+        <label class="form-check-label" for="composition_scheme">Registered under the GST composition scheme (issue a bill of supply, no tax shown)</label>
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-primary mt-4" type="submit">Save settings</button>
+</form>
+{% endblock %}

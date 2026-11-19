@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, date_range %}
+{% block title %}Sales{% endblock %}
+{% block content %}
+{% call page_header("Sales") %}
+  <a class="btn btn-primary" href="{{ url_for('sales.counter') }}"><i class="bi bi-receipt" aria-hidden="true"></i> New bill</a>
+{% endcall %}
+{{ date_range(start, end) }}
+<div class="row g-3 mb-3">
+  <div class="col-6 col-md-3"><div class="stat"><div class="label">Bills</div><div class="value">{{ summary.count }}</div></div></div>
+  <div class="col-6 col-md-3"><div class="stat"><div class="label">Total</div><div class="value">₹{{ summary.total|inr }}</div></div></div>
+  {% for mode, amount in summary.by_mode.items() if amount %}
+  <div class="col-6 col-md-2"><div class="stat"><div class="label">{{ mode }}</div><div class="value fs-5">₹{{ amount|inr }}</div></div></div>
+  {% endfor %}
+</div>
+<div class="panel table-wrap">
+  <table class="table align-middle">
+    <thead><tr><th>Invoice</th><th>Time</th><th>Patient</th><th>Billed by</th><th>Payment</th><th class="num">Total (₹)</th><th></th></tr></thead>
+    <tbody>
+    {% for s in sales %}
+      <tr class="{{ 'text-body-secondary' if s.status == 'void' }}">
+        <td><a href="{{ url_for('sales.invoice', sb_id=s.sb_id) }}">{{ s.invoice_no }}</a></td>
+        <td>{{ s.sold_at|local }}</td>
+        <td>{{ s.patient_name or "Walk-in" }}</td>
+        <td>{{ s.billed_by.name }}</td>
+        <td>{{ s.payment_mode }}</td>
+        <td class="num">{{ s.total|inr }}</td>
+        <td>{% if s.status == "void" %}<span class="badge text-bg-danger">Void</span>{% endif %}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="text-body-secondary">No bills in this period.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

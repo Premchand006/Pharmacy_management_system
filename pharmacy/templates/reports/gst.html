@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header %}
+{% block title %}GST returns{% endblock %}
+{% block content %}
+{{ page_header("GST figures for " ~ month.strftime("%B %Y"), "Totals for GSTR-1 and GSTR-3B. Check them with your accountant before filing.") }}
+<form class="row g-2 align-items-end mb-3" method="get">
+  <div class="col-auto"><label class="form-label small" for="month">Month</label>
+    <input class="form-control" id="month" type="month" name="month" value="{{ month.strftime('%Y-%m') }}"></div>
+  <div class="col-auto"><button class="btn btn-outline-secondary" type="submit">Show</button></div>
+</form>
+{% set m = month.strftime('%Y-%m') %}
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="panel table-wrap">
+      <div class="d-flex justify-content-between"><h2>B2C sales by rate (Table 7)</h2>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('reports.gst', month=m, export='b2cs') }}">CSV</a></div>
+      <table class="table table-sm">
+        <thead><tr><th>Rate</th><th class="num">Taxable (₹)</th><th class="num">CGST</th><th class="num">SGST</th></tr></thead>
+        <tbody>
+        {% for rate, v in by_rate %}<tr><td>{{ rate|int }}%</td><td class="num">{{ v.taxable|inr }}</td><td class="num">{{ v.cgst|inr }}</td><td class="num">{{ v.sgst|inr }}</td></tr>
+        {% else %}<tr><td colspan="4" class="text-body-secondary">No B2C sales.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h2>Documents issued (Table 13)</h2>
+      {% if docs.total %}
+      <p class="mb-0">Invoices {{ docs.first }} to {{ docs.last }}: {{ docs.total }} issued, {{ docs.cancelled }} cancelled, {{ docs.total - docs.cancelled }} net.</p>
+      {% else %}<p class="text-body-secondary mb-0">No invoices this month.</p>{% endif %}
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="panel table-wrap">
+      <div class="d-flex justify-content-between"><h2>HSN summary (Table 12)</h2>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('reports.gst', month=m, export='hsn') }}">CSV</a></div>
+      <table class="table table-sm">
+        <thead><tr><th>HSN</th><th>Rate</th><th class="num">Qty</th><th class="num">Value</th><th class="num">Taxable</th><th class="num">Tax</th></tr></thead>
+        <tbody>
+        {% for (hsn, rate), v in by_hsn %}<tr><td>{{ hsn }}</td><td>{{ rate|int }}%</td><td class="num">{{ v.qty }}</td><td class="num">{{ v.value|inr }}</td><td class="num">{{ v.taxable|inr }}</td><td class="num">{{ (v.cgst + v.sgst)|inr }}</td></tr>
+        {% else %}<tr><td colspan="6" class="text-body-secondary">No sales.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="panel table-wrap">
+      <div class="d-flex justify-content-between"><h2>B2B invoices (Table 4)</h2>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('reports.gst', month=m, export='b2b') }}">CSV</a></div>
+      <table class="table table-sm">
+        <thead><tr><th>GSTIN</th><th>Invoice</th><th class="num">Taxable</th><th class="num">Value</th></tr></thead>
+        <tbody>
+        {% for s in b2b %}<tr><td>{{ s.buyer_gstin }}</td><td><a href="{{ url_for('sales.invoice', sb_id=s.sb_id) }}">{{ s.invoice_no }}</a></td><td class="num">{{ s.taxable_total|inr }}</td><td class="num">{{ s.total|inr }}</td></tr>
+        {% else %}<tr><td colspan="4" class="text-body-secondary">No B2B invoices.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

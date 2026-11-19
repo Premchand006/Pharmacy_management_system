@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header %}
+{% block title %}My prescriptions{% endblock %}
+{% block public_content %}
+{% call page_header("Hello, " ~ g.user.name.split()[0], "Customer ID " ~ g.user.c_id) %}
+  <a class="btn btn-primary" href="{{ url_for('portal.prescription_new') }}"><i class="bi bi-plus-lg" aria-hidden="true"></i> Send a prescription</a>
+{% endcall %}
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="panel table-wrap">
+      <h2>Prescriptions</h2>
+      <table class="table align-middle">
+        <thead><tr><th>No.</th><th>Date</th><th>Doctor</th><th class="num">Medicines</th></tr></thead>
+        <tbody>
+        {% for p in prescriptions %}
+          <tr><td><a href="{{ url_for('portal.prescription', pres_id=p.pres_id) }}">#{{ p.pres_id }}</a></td><td>{{ p.date.strftime("%d %b %Y") }}</td>
+            <td>{{ p.doctor_name }}</td><td class="num">{{ p.items|length }}</td></tr>
+        {% else %}<tr><td colspan="4" class="text-body-secondary">No prescriptions yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="panel table-wrap">
+      <h2>Recent bills</h2>
+      <table class="table align-middle">
+        <thead><tr><th>Invoice</th><th>Date</th><th class="num">Total (₹)</th></tr></thead>
+        <tbody>
+        {% for s in purchases %}
+          <tr><td><a href="{{ url_for('portal.purchase', sb_id=s.sb_id) }}">{{ s.invoice_no }}</a></td><td>{{ s.sold_at|local("%d %b %Y") }}</td><td class="num">{{ s.total|inr }}</td></tr>
+        {% else %}<tr><td colspan="3" class="text-body-secondary">No bills linked to your ID yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<p class="small text-body-secondary mt-3">Want your account closed? Ask at the counter. See the <a href="{{ url_for('public.privacy') }}">privacy notice</a> for what we keep and why.</p>
+{% endblock %}

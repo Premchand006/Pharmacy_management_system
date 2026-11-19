@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_form.html" import page_header, csrf, field, textarea %}
+{% block title %}Send a prescription{% endblock %}
+{% macro line() %}
+  <tr data-row>
+    <td><select class="form-select form-select-sm" name="p_id[]" aria-label="Medicine" required>
+        <option value="">Choose…</option>
+        {% for p in products %}<option value="{{ p.p_id }}">{{ p.label }}</option>{% endfor %}
+      </select></td>
+    <td><input class="form-control form-control-sm" name="dosage[]" maxlength="50" placeholder="1-0-1" aria-label="Dosage"></td>
+    <td><input class="form-control form-control-sm" name="duration[]" maxlength="50" placeholder="5 days" aria-label="Duration"></td>
+    <td><input class="form-control form-control-sm" name="qty[]" type="number" min="1" value="1" style="width: 5rem" aria-label="Quantity" required></td>
+    <td><input class="form-control form-control-sm" name="instructions[]" maxlength="500" placeholder="After food" aria-label="Instructions"></td>
+    <td><button type="button" class="btn btn-sm btn-outline-secondary" data-remove-row aria-label="Remove medicine"><i class="bi bi-x-lg" aria-hidden="true"></i></button></td>
+  </tr>
+{% endmacro %}
+{% block public_content %}
+{{ page_header("Send a prescription", "Copy it from your doctor's slip. Bring the original when you collect; the pharmacist checks it before handing over the medicines.") }}
+<form method="post" class="panel">
+  {{ csrf() }}
+  <div class="row g-3">
+    {{ field("doctor_name", "Doctor's name", "", required=True, maxlength=100) }}
+    {{ field("doctor_reg_no", "Doctor's registration no.", "", required=True, maxlength=50, help="Printed on the prescription.") }}
+    {{ field("hospital_name", "Hospital or clinic", "", maxlength=120) }}
+    {{ field("date", "Date on the prescription", today, type="date", required=True, max=today) }}
+    {{ textarea("doctor_address", "Doctor's or clinic address", "", required=True) }}
+  </div>
+  <h2 class="mt-4">Medicines</h2>
+  <div class="table-wrap">
+    <table class="table align-middle">
+      <thead><tr><th>Medicine</th><th>Dosage</th><th>Duration</th><th>Qty</th><th>Instructions</th><th></th></tr></thead>
+      <tbody data-rows="meds">{{ line() }}</tbody>
+    </table>
+  </div>
+  <template data-row-template="meds">{{ line() }}</template>
+  <button type="button" class="btn btn-outline-secondary" data-add-row="meds"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add medicine</button>
+  <div class="row g-3 mt-1">{{ textarea("notes", "Anything else the pharmacist should know", "") }}</div>
+  <button class="btn btn-primary mt-4" type="submit">Send prescription</button>
+</form>
+{% endblock %}
