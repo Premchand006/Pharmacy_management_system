@@ -137,8 +137,8 @@ dmypy.json
 
 # Project-specific
 *.log
-config.py
-secrets.py
+/config.py
+/secrets.py
 .secret_key
 
 # Temporary files
