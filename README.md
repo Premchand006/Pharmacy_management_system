@@ -1,5 +1,8 @@
 # Pharmacy Management System
 
+[![CI](https://github.com/Premchand006/Pharmacy_management_system/actions/workflows/ci.yml/badge.svg)](https://github.com/Premchand006/Pharmacy_management_system/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A web app for running a retail chemist's counter in India: GST billing,
 batch-wise stock with expiry control, supplier purchases, the drug
 registers the Drugs Rules ask for, monthly GST figures, and a portal where
@@ -130,3 +133,7 @@ The register and invoice formats follow the Drugs Rules, 1945 (Rule 65),
 the CGST Rules (Rule 46) and the GSTR-1 tables as of 2026, but a
 pharmacist and an accountant should check them for your state before you
 rely on them.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
